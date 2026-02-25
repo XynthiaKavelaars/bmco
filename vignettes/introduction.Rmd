@@ -1,0 +1,437 @@
+---
+title: "Introduction to bmco"
+output: rmarkdown::html_vignette
+bibliography: bmco.bib
+nocite: '@*'
+vignette: >
+  %\VignetteIndexEntry{Introduction to bmco}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+% Source - https://stackoverflow.com/a/61528568
+% Posted by J_F
+% Retrieved 2026-02-18, License - CC BY-SA 4.0
+
+```{r, echo=FALSE}
+biblio <- RefManageR::ReadBib("bmco.bib", check = "error")
+```
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5
+)
+```
+
+## Overview
+
+The **bmco** package provides Bayesian methods for analyzing multiple binary outcomes simultaneously. It addresses a common problem in clinical trials, educational research, and other fields: how to compare groups when success is defined by multiple endpoints.
+
+### The Problem
+
+Suppose you're evaluating a new drug and want to know if it improves **both** symptom relief and quality of life. 
+
+`bmco` provides a principled Bayesian framework that:
+
+- Analyzes **multiple binary outcomes jointly**
+- Accounts for **correlations between outcomes**
+- Offers **flexible decision rules** (All, Any, or weighted combinations)
+- Provides **posterior probabilities** 
+- Estimates **subgroup effects** using data from the entire sample
+- Handles **clustered data**
+
+## Quick Start Example
+
+```{r setup}
+library(bmco)
+set.seed(2024)
+
+# Simulate a clinical trial with two binary outcomes
+trial_data <- data.frame(
+  treatment = rep(c("placebo", "drug"), each = 50),
+  symptom_relief = rbinom(100, 1, prob = rep(c(0.4, 0.6), each = 50)),
+  quality_of_life = rbinom(100, 1, prob = rep(c(0.5, 0.7), each = 50))
+)
+
+# Test if drug improves BOTH outcomes
+result <- bmvb(
+  data = trial_data,
+  grp = "treatment",
+  grp_a = "placebo",
+  grp_b = "drug",
+  y_vars = c("symptom_relief", "quality_of_life"),
+  test = "right_sided",
+  rule = "All",
+  n_it = 5000
+)
+
+print(result)
+```
+
+The posterior probability (`pop`) of this example tells us: **"What is the probability that the drug is better than placebo on BOTH outcomes?"**
+
+## Three Analysis Functions
+
+The package provides three main functions for different scenarios:
+
+### 1. `bmvb()`: Basic Comparison
+
+**Use when**: Comparing two groups on multiple binary outcomes. Currently supported for two outcomes only.
+
+```{r bmvb_example, eval=FALSE}
+# Compare two teaching methods on two outcomes
+bmvb(
+  data = trial_data,
+  grp = "treatment",
+  grp_a = "placebo",
+  grp_b = "drug",
+  y_vars = c("symptom_relief", "quality_of_life"),
+  rule = "All",
+  n_it = 5000
+)
+```
+
+For more details on statistical methodology or when using this function, please cite:
+
+`r capture.output(print(biblio["Kavelaars2020"]))`
+
+### 2. `bglm()`: Subgroup analysis
+
+**Use when**: Comparing two subgroups on multiple binary outcomes (e.g., age range, particular baseline severity). Currently supported for two outcomes only.
+
+```{r bglm_example, eval=FALSE}
+# Add age covariate
+trial_data$age <- rnorm(100, mean = 50, sd = 10)
+
+result_bglm <- bglm(
+  data = trial_data,
+  grp = "treatment",
+  grp_a = "placebo",
+  grp_b = "drug",
+  x_var = "age",
+  y_vars = c("symptom_relief", "quality_of_life"),
+  x_method = "Empirical",
+  x_def = c(-Inf, Inf),
+  rule = "All",
+  n_burn = 1000,
+  n_it = 3000
+)
+```
+
+For more details on statistical methodology or when using this function, please cite:
+
+`r capture.output(print(biblio["Kavelaars2024"]))`
+
+Also see the "Subgroup analysis" vignette for details.
+
+### 3. `bglmm()`: With Clustering
+
+**Use when**: Comparing two (sub)groups on multiple binary outcomes, when data are clustered (patients within hospitals, students within schools).
+
+```{r bglmm_example, eval=FALSE}
+# Add cluster variable
+trial_data$hospital <- rep(1:10, each = 10)
+
+result_bglmm <- bglmm(
+  data = trial_data,
+  grp = "treatment",
+  grp_a = "placebo",
+  grp_b = "drug",
+  id_var = "hospital",
+  x_var = "age",
+  y_vars = c("symptom_relief", "quality_of_life"),
+  x_method = "Empirical",
+  x_def = c(-Inf, Inf),
+  rule = "All",
+  n_burn = 1000,
+  n_it = 3000,
+  n_thin = 3
+)
+```
+
+For more details on statistical methodology or when using this function, please cite:
+
+`r capture.output(print(biblio["Kavelaars2023"]))`
+
+Also see the "Multilevel Models" vignette for details.
+
+## Decision Rules
+
+Choose how to define "treatment success":
+
+### All Rule (Conjunctive)
+
+Treatment must improve **ALL** outcomes:
+
+```{r rule_all}
+result_all <- bmvb(
+  data = trial_data,
+  grp = "treatment",
+  grp_a = "placebo",
+  grp_b = "drug",
+  y_vars = c("symptom_relief", "quality_of_life"),
+  rule = "All",  # BOTH outcomes must improve
+  n_it = 5000
+)
+
+cat("P(drug better on BOTH outcomes):", result_all$delta$pop, "\n")
+```
+
+### Any Rule (Disjunctive)
+
+Treatment must improve **AT LEAST ONE** outcome:
+
+```{r rule_any}
+result_any <- bmvb(
+  data = trial_data,
+  grp = "treatment",
+  grp_a = "placebo",
+  grp_b = "drug",
+  y_vars = c("symptom_relief", "quality_of_life"),
+  rule = "Any",  # At least one outcome must improve
+  n_it = 5000
+)
+
+cat("P(drug better on AT LEAST ONE outcome):", result_any$delta$pop, "\n")
+```
+
+### Compensatory Rule (Weighted)
+
+Weight outcomes by importance:
+
+```{r rule_comp}
+result_comp <- bmvb(
+  data = trial_data,
+  grp = "treatment",
+  grp_a = "placebo",
+  grp_b = "drug",
+  y_vars = c("symptom_relief", "quality_of_life"),
+  rule = "Comp",
+  w = c(0.7, 0.3),  # Symptom relief weighted 70%, QoL 30%
+  n_it = 5000
+)
+
+cat("P(weighted improvement):", result_comp$delta$pop, "\n")
+cat("Weighted effect:", result_comp$delta$w_delta, "\n")
+```
+
+## Test Directions
+
+### Right-sided Test
+
+Test if group B is better than group A:
+
+```{r test_right}
+bmvb(
+  data = trial_data,
+  grp = "treatment",
+  grp_a = "placebo",      
+  grp_b = "drug", # Put the group you expect to be better here
+  y_vars = c("symptom_relief", "quality_of_life"),
+  test = "right_sided",  # P(drug > placebo)
+  n_it = 5000
+)
+```
+
+### Left-sided Test
+
+Test if group A is better than group B:
+
+```{r test_left}
+bmvb(
+  data = trial_data,
+  grp = "treatment",
+  grp_a = "placebo",
+  grp_b = "drug",
+  y_vars = c("symptom_relief", "quality_of_life"),
+  test = "left_sided",  # P(placebo > drug)
+  n_it = 5000
+)
+```
+
+**Note**: Left-sided with (A, B) is equivalent to right-sided with (B, A).
+
+## Understanding the Output
+
+```{r output_structure}
+result <- bmvb(
+  data = trial_data,
+  grp = "treatment",
+  grp_a = "placebo",
+  grp_b = "drug",
+  y_vars = c("symptom_relief", "quality_of_life"),
+  n_it = 5000
+)
+
+# Key components
+names(result)
+
+# Posterior estimates for each group
+result$estimates
+
+# Sample sizes
+result$sample_sizes
+
+# Treatment effect
+result$delta
+
+# Test information
+result$info
+```
+
+### Key Output Elements
+
+- `estimates$mean_a` / `mean_b`: Posterior mean success probabilities for each group
+- `estimates$sd_a` / `sd_b`: Posterior standard deviations
+- `delta$mean_delta`: Mean treatment effect (difference in probabilities)
+- `delta$se_delta`: Standard error of treatment effect
+- `delta$pop`: **Posterior probability** (the main result!)
+- `info$test_label`: Human-readable description of the test
+
+## Posterior Samples
+
+For custom analyses, extract posterior samples:
+
+```{r samples}
+result_samples <- bmvb(
+  data = trial_data,
+  grp = "treatment",
+  grp_a = "placebo",
+  grp_b = "drug",
+  y_vars = c("symptom_relief", "quality_of_life"),
+  n_it = 5000,
+  return_samples = TRUE
+)
+
+# Access posterior samples
+str(result_samples$samples)
+
+# Custom probability calculations
+samples <- result_samples$samples$delta
+
+# P(effect on symptom relief > 0.1)
+cat("P(delta[symptom] > 0.1):", mean(samples[, 1] > 0.1), "\n")
+
+# P(effect on QoL > 0.15)
+cat("P(delta[QoL] > 0.15):", mean(samples[, 2] > 0.15), "\n")
+
+# Credible intervals
+cat("\n95% Credible Intervals:\n")
+print(apply(samples, 2, quantile, probs = c(0.025, 0.975)))
+```
+
+## Practical Considerations
+
+### Sample Size
+
+For basic comparison: see @Kavelaars2020. 
+For subgroup analysis: see @Kavelaars2024.
+
+### MCMC Settings
+
+Default settings usually work, but you can adjust:
+
+```{r mcmc_settings, eval=FALSE}
+bmvb(
+  data = trial_data,
+  grp = "treatment",
+  grp_a = "placebo",
+  grp_b = "drug",
+  y_vars = c("symptom_relief", "quality_of_life"),
+  n_it = 10000  # More iterations for smoother estimates
+)
+```
+
+For `bglm()` and `bglmm()`:
+
+```{r mcmc_settings_reg, eval=FALSE}
+bglm(
+  # ... arguments ...
+  n_burn = 2000,  # Burn-in / warm-up iterations
+  n_it = 5000,    # Sampling iterations
+  n_thin = 1      # Keep every nth sample (reduces memory)
+)
+```
+
+### Missing Data
+
+Missing values are automatically handled via complete-case analysis:
+
+```{r missing_data, eval=FALSE}
+# Introduce missing data
+trial_data_missing <- trial_data
+trial_data_missing$symptom_relief[1:5] <- NA
+
+result_missing <- bmvb(
+  data = trial_data_missing,
+  grp = "treatment",
+  grp_a = "placebo",
+  grp_b = "drug",
+  y_vars = c("symptom_relief", "quality_of_life"),
+  n_it = 5000
+)
+
+# Sample sizes are reduced
+result_missing$sample_sizes
+```
+
+## Comparison with Frequentist Approaches
+
+### Traditional approach
+
+```{r frequentist, eval=FALSE}
+# Separate tests for each outcome
+chisq_symptom <- chisq.test(table(trial_data$treatment, trial_data$symptom_relief))
+chisq_qol <- chisq.test(table(trial_data$treatment, trial_data$quality_of_life))
+
+cat("Frequentist p-values:\n")
+cat("  Symptom relief:", chisq_symptom$p.value, "\n")
+cat("  Quality of life:", chisq_qol$p.value, "\n")
+cat("  Bonferroni-adjusted alpha: 0.025 (needed for Any-rule only; not needed for All-rule)\n\n")
+```
+
+### Bayesian approach
+
+```{r bayesian, eval=FALSE}
+result_bayes <- bmvb(
+  data = trial_data,
+  grp = "treatment",
+  grp_a = "placebo",
+  grp_b = "drug",
+  y_vars = c("symptom_relief", "quality_of_life"),
+  rule = "All",
+  n_it = 5000
+)
+
+cat("Bayesian result:\n")
+cat("  P(drug better on BOTH):", result_bayes$delta$pop, "\n")
+```
+
+### Advantages of Bayesian approach
+
+1. **Direct probability statements**: "95% probability drug is better" vs. "reject null at alpha=0.05"
+2. **Flexible decision rules**: All/Any/Weighted combinations
+4. **Coherent uncertainty**: Full sample of posterior distribution available
+
+## Next Steps
+
+Explore the other vignettes:
+
+- **Subgroup analysis**: Using `bglm()` to adjust for baseline variables
+- **Multilevel Models**: Using `bglmm()` for clustered data
+
+## References
+
+**Statistical methodology**:
+More details about statistical methodology can be found here in the papers below.
+
+When using the `bmvb()` function, please cite:
+`r capture.output(print(biblio["Kavelaars2020"], .opts = list(style = "markdown", bib.style = "authoryear", sorting = "ydnt")))`
+
+When using the `bglm()` function, please cite:
+`r capture.output(print(biblio["Kavelaars2024"], .opts = list(style = "markdown", bib.style = "authoryear", sorting = "ydnt")))`
+
+When using the `bglmm()` function, please cite:
+`r capture.output(print(biblio["Kavelaars2023"], .opts = list(style = "markdown", bib.style = "authoryear", sorting = "ydnt")))`

@@ -1,0 +1,27 @@
+Package: bmco
+Title: Bayesian Analysis for Multivariate Categorical Outcomes
+Version: 0.1.0
+Authors@R: 
+    person("Xynthia", "Kavelaars", email = "xynthia.kavelaars@ou.nl", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-1600-3153"))
+Description: Provides Bayesian methods for comparing groups on multiple binary
+     outcomes. Includes basic tests using multivariate Bernoulli distributions,
+     subgroup analysis via generalized linear models, and multilevel models
+     for clustered data.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports: 
+    abind,
+    coda,
+    MCMCpack,
+    msm,
+    pgdraw,
+    tcltk
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    RefManageR
+Config/testthat/edition: 3
+VignetteBuilder: knitr
