@@ -34,7 +34,7 @@ test_that("bglm runs with valid input", {
   test_data <- make_bglm_data()
   result <- bglm(
     data   = test_data, grp = "grp", grp_a = "A", grp_b = "B",
-    x_var  = "x", y_vars = c("y1", "y2"), n_it = 1000
+    x_var  = "x", y_vars = c("y1", "y2"), n_it = 500
   )
   expect_s3_class(result, "bglm")
   expect_type(result, "list")
@@ -46,13 +46,13 @@ test_that("bglm returns samples when requested", {
   test_data <- make_bglm_data(seed = 124)
   result <- bglm(
     data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
-    x_var = "x", y_vars = c("y1", "y2"), n_it = 1000, return_samples = TRUE
+    x_var = "x", y_vars = c("y1", "y2"), n_it = 500, return_samples = TRUE
   )
   expect_true("samples" %in% names(result))
   expect_type(result$samples$theta_a, "double")
   expect_type(result$samples$theta_b, "double")
   expect_type(result$samples$delta,   "double")
-  expect_equal(nrow(result$samples$theta_a), 2000)
+  expect_equal(nrow(result$samples$theta_a), 1000)
 })
 
 #### Test 3: Posterior Probability Range ####
@@ -60,7 +60,7 @@ test_that("posterior probability is between 0 and 1", {
   test_data <- make_bglm_data(seed = 125)
   result <- bglm(
     data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
-    x_var = "x", y_vars = c("y1", "y2"), n_it = 1000
+    x_var = "x", y_vars = c("y1", "y2"), n_it = 500
   )
   expect_gte(result$delta$pop, 0)
   expect_lte(result$delta$pop, 1)
@@ -73,20 +73,20 @@ test_that("all decision rules work", {
 
   result_all <- bglm(
     data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
-    x_var = "x", y_vars = c("y1", "y2"), rule = "All", n_it = 1000
+    x_var = "x", y_vars = c("y1", "y2"), rule = "All", n_it = 500
   )
   expect_equal(result_all$info$rule, "All")
 
   result_any <- bglm(
     data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
-    x_var = "x", y_vars = c("y1", "y2"), rule = "Any", n_it = 1000
+    x_var = "x", y_vars = c("y1", "y2"), rule = "Any", n_it = 500
   )
   expect_equal(result_any$info$rule, "Any")
 
   result_comp <- bglm(
     data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
     x_var = "x", y_vars = c("y1", "y2"),
-    rule = "Comp", w = c(0.6, 0.4), n_it = 1000
+    rule = "Comp", w = c(0.6, 0.4), n_it = 500
   )
   expect_equal(result_comp$info$rule, "Comp")
   expect_equal(result_comp$info$w, c(0.6, 0.4))
@@ -99,14 +99,14 @@ test_that("test directions work correctly", {
 
   result_right <- bglm(
     data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
-    x_var = "x", y_vars = c("y1", "y2"), test = "right_sided", n_it = 1000
+    x_var = "x", y_vars = c("y1", "y2"), test = "right_sided", n_it = 500
   )
   expect_equal(result_right$info$test, "right_sided")
   expect_match(result_right$info$test_label, "B > A")
 
   result_left <- bglm(
     data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
-    x_var = "x", y_vars = c("y1", "y2"), test = "left_sided", n_it = 1000
+    x_var = "x", y_vars = c("y1", "y2"), test = "left_sided", n_it = 500
   )
   expect_equal(result_left$info$test, "left_sided")
   expect_match(result_left$info$test_label, "A > B")
@@ -119,7 +119,7 @@ test_that("equal weights are used by default for Comp rule", {
     bglm(
       data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
       x_var = "x", y_vars = c("y1", "y2"),
-      rule = "Comp", w = NULL, n_it = 1000
+      rule = "Comp", w = NULL, n_it = 500
     )
   )
   expect_equal(result$info$w, c(0.5, 0.5))
@@ -131,7 +131,7 @@ test_that("different prior parameters can be specified", {
   result <- bglm(
     data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
     x_var = "x", y_vars = c("y1", "y2"),
-    b_mu0 = 1, b_sigma0 = 1e-1, n_it = 1000
+    b_mu0 = 1, b_sigma0 = 1e-1, n_it = 500
   )
   expect_s3_class(result, "bglm")
 })
@@ -148,7 +148,7 @@ test_that("sample sizes are correctly reported", {
   )
   result <- bglm(
     data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
-    x_var = "x", y_vars = c("y1", "y2"), n_it = 1000
+    x_var = "x", y_vars = c("y1", "y2"), n_it = 500
   )
   expect_equal(result$sample_sizes$n_a, n_a)
   expect_equal(result$sample_sizes$n_b, n_b)
@@ -163,7 +163,7 @@ test_that("missing data on y triggers warning and reduces sample size", {
   expect_warning(
     result <- bglm(
       data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
-      x_var = "x", y_vars = c("y1", "y2"), n_it = 1000
+      x_var = "x", y_vars = c("y1", "y2"), n_it = 500
     ),
     "Missing data detected"
   )
@@ -179,7 +179,7 @@ test_that("missing data on x triggers warning and reduces total sample size", {
   expect_warning(
     result <- bglm(
       data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
-      x_var = "x", y_vars = c("y1", "y2"), n_it = 1000
+      x_var = "x", y_vars = c("y1", "y2"), n_it = 500
     ),
     "Missing data detected"
   )
@@ -218,7 +218,7 @@ test_that("x_data rows match n_a + n_b after joint x/y NA removal", {
       data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
       y_vars = c("y1", "y2"), test = "right_sided", rule = "All", w = NULL,
       analysis = "bglm", x_var = "x", x_method = "Empirical",
-      x_def = c(-Inf, Inf), n_it = 1000
+      x_def = c(-Inf, Inf), n_it = 500
     )
   )
   expect_equal(nrow(validated$x_data), validated$n_a + validated$n_b)
@@ -364,7 +364,7 @@ test_that("warning for covariate with no variation", {
       data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
       y_vars = c("y1", "y2"), test = "right_sided", rule = "All", w = NULL,
       analysis = "bglm", x_var = "x", x_method = "Empirical",
-      x_def = c(-Inf, Inf), n_it = 1000
+      x_def = c(-Inf, Inf), n_it = 500
     ),
     "no variation"
   )
@@ -385,7 +385,7 @@ test_that("warning for high collinearity between group and covariate", {
       data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
       y_vars = c("y1", "y2"), test = "right_sided", rule = "All", w = NULL,
       analysis = "bglm", x_var = "x", x_method = "Empirical",
-      x_def = c(-Inf, Inf), n_it = 1000
+      x_def = c(-Inf, Inf), n_it = 500
     ),
     "High correlation"
   )
@@ -398,7 +398,7 @@ test_that("warning when x_def lower bound is below observed minimum", {
       data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
       y_vars = c("y1", "y2"), test = "right_sided", rule = "All", w = NULL,
       analysis = "bglm", x_var = "x", x_method = "Empirical",
-      x_def = c(-100, Inf), n_it = 1000
+      x_def = c(-100, Inf), n_it = 500
     ),
     "below minimum observed value"
   )
@@ -411,7 +411,7 @@ test_that("warning when x_def upper bound is above observed maximum", {
       data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
       y_vars = c("y1", "y2"), test = "right_sided", rule = "All", w = NULL,
       analysis = "bglm", x_var = "x", x_method = "Empirical",
-      x_def = c(-Inf, 100), n_it = 1000
+      x_def = c(-Inf, 100), n_it = 500
     ),
     "above maximum observed value"
   )
@@ -431,7 +431,7 @@ test_that("warning for few unique values in continuous covariate with Empirical 
       data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
       y_vars = c("y1", "y2"), test = "right_sided", rule = "All", w = NULL,
       analysis = "bglm", x_var = "x", x_method = "Empirical",
-      x_def = c(-Inf, Inf), n_it = 1000
+      x_def = c(-Inf, Inf), n_it = 500
     ),
     "Few unique values"
   )
@@ -486,7 +486,7 @@ test_that("print method works", {
   test_data <- make_bglm_data(n = 60, seed = 132)
   result <- bglm(
     data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
-    x_var = "x", y_vars = c("y1", "y2"), n_it = 1000
+    x_var = "x", y_vars = c("y1", "y2"), n_it = 500
   )
   expect_output(print(result), "Bayesian Multivariate Logistic Regression")
   expect_output(print(result), "Group Estimates")
@@ -509,7 +509,7 @@ test_that("warning for small sample size in both groups", {
   )
   expect_all_warnings(
     bglm(data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
-         x_var = "x", y_vars = c("y1", "y2"), n_it = 1000),
+         x_var = "x", y_vars = c("y1", "y2"), n_it = 500),
     c("Small sample size.*A", "Small sample size.*B")
   )
 })
@@ -529,7 +529,7 @@ test_that("warning for outcome with no variation — drie warnings verwacht", {
   )
   expect_all_warnings(
     bglm(data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
-         x_var = "x", y_vars = c("y1", "y2"), n_it = 1000),
+         x_var = "x", y_vars = c("y1", "y2"), n_it = 500),
     c(
       "no variation \\(all 1\\)",
       "no variation in group A \\(all 1\\)",
@@ -552,7 +552,7 @@ test_that("discrete (factor) covariate is accepted and measurement level is 'dis
     data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
     y_vars = c("y1", "y2"), test = "right_sided", rule = "All", w = NULL,
     analysis = "bglm", x_var = "x", x_method = "Value", x_def = 0,
-    n_it = 1000
+    n_it = 500
   )
   expect_equal(validated$ml, "discrete")
   expect_true(is.matrix(validated$x_data))

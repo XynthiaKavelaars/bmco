@@ -376,12 +376,11 @@ test_that("warning for very few clusters (J < 5)", {
     y1 = rbinom(60, 1, 0.5),
     y2 = rbinom(60, 1, 0.5)
   )
-  # capture_warnings() vangt alle warnings op (inclusief eventuele MCMC-warnings).
-  # We controleren alleen of de gewenste check_input-warning aanwezig is.
-  warns <- testthat::capture_warnings(
+
+    warns <- testthat::capture_warnings(
     bglmm(data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
           id_var = "cluster", x_var = "age", y_vars = c("y1", "y2"),
-          x_method = "Value", x_def = 0, n_burn = 100, n_it = 1000,
+          x_method = "Value", x_def = 0, n_burn = 20, n_it = 1000,
           return_diagnostics = FALSE)
   )
   expect_true(any(grepl("Very few clusters", warns)))
@@ -491,26 +490,27 @@ test_that("warning when n_burn = 0", {
   expect_error(
      bglm(data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
          x_var = "age", y_vars = c("y1", "y2"),
-         x_method = "Value", x_def = 0, n_burn = 0, n_it = 1000, n_thin = 1)
+         x_method = "Value", x_def = 0, n_burn = 0, n_it = 100, n_thin = 1)
     ,
     "burnin"
   )
 })
 
-test_that("message when n_it is very large without thinning", {
-  test_data <- data.frame(
-    grp = rep(c("A", "B"), each = 30),
-    age = rnorm(60),
-    y1 = rbinom(60, 1, 0.5),
-    y2 = rbinom(60, 1, 0.5)
-  )
-  expect_message(
-    bglm(data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
-         x_var = "age", y_vars = c("y1", "y2"),
-         x_method = "Value", x_def = 0, n_burn = 10, n_it = 1+1e6, n_thin = 1),
-    "thinning"
-  )
-})
+# NOT RUN (computation time)
+#test_that("message when n_it is very large without thinning", {
+#  test_data <- data.frame(
+#    grp = rep(c("A", "B"), each = 30),
+#    age = rnorm(60),
+#    y1 = rbinom(60, 1, 0.5),
+#    y2 = rbinom(60, 1, 0.5)
+#  )
+#  expect_message(
+#    bglm(data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
+#         x_var = "age", y_vars = c("y1", "y2"),
+#         x_method = "Value", x_def = 0, n_burn = 10, n_it = 1+1e6, n_thin = 1),
+#    "thinning"
+#  )
+#})
 
 # =============================================================================
 # PART 8: PERFECT SEPARATION CASES

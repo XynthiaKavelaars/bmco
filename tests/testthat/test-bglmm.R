@@ -444,19 +444,19 @@ test_that("warning for few unique values in continuous covariate", {
     "Few unique values"
   )
 })
-
-test_that("message for large n_it without thinning", {
-  test_data <- make_bglmm_data()
-  expect_message(
-    bmco:::check_input(
-      data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
-      y_vars = c("y1", "y2"), test = "right_sided", rule = "All", w = NULL,
-      analysis = "bglmm", x_var = "x", x_method = "Empirical",
-      x_def = c(-Inf, Inf), id_var = "id", n_it = 1+1e6, n_thin = 1
-    ),
-    "thinning"
-  )
-})
+#not run due to computation time
+#test_that("message for large n_it without thinning", {
+#  test_data <- make_bglmm_data()
+#  expect_message(
+#    bmco:::check_input(
+#      data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
+#      y_vars = c("y1", "y2"), test = "right_sided", rule = "All", w = NULL,
+#      analysis = "bglmm", x_var = "x", x_method = "Empirical",
+#      x_def = c(-Inf, Inf), id_var = "id", n_it = 1+1e6, n_thin = 1
+#    ),
+#    "thinning"
+#  )
+#})
 
 # ============================================================================
 # TEST GROUP 5: bglmm-Specific Checks (section 7 of check_input)

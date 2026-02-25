@@ -97,8 +97,8 @@ result_full_sample <- bglm(
   x_def = c(-Inf, Inf), # Full sample
   test = "right_sided",
   rule = "All",
-  n_burn = 2000,
-  n_it = 5000
+  n_burn = 200,
+  n_it = 500
 )
 
 print(result_full_sample)
@@ -122,8 +122,8 @@ result_subgroup <- bglm(
   x_def = c(60, Inf),
   test = "right_sided",
   rule = "All",
-  n_burn = 2000,
-  n_it = 5000
+  n_burn = 200,
+  n_it = 500
 )
 ```
 
@@ -153,8 +153,8 @@ result_age60 <- bglm(
   x_def = 60,  # Effect for 60-year-olds
   test = "right_sided",
   rule = "All",
-  n_burn = 2000,
-  n_it = 5000
+  n_burn = 200,
+  n_it = 500
 )
 ```
 
@@ -181,8 +181,8 @@ result_young <- bglm(
   x_def = c(-Inf, 55),  # Younger patients (age <= 55)
   test = "right_sided",
   rule = "All",
-  n_burn = 2000,
-  n_it = 5000
+  n_burn = 200,
+  n_it = 500
 )
 
 result_old <- bglm(
@@ -196,8 +196,8 @@ result_old <- bglm(
   x_def = c(55, Inf),  # Older patients (age > 55)
   test = "right_sided",
   rule = "All",
-  n_burn = 2000,
-  n_it = 5000
+  n_burn = 200,
+  n_it = 500
 )
 
 result_all_ages <- bglm(
@@ -211,8 +211,8 @@ result_all_ages <- bglm(
   x_def = c(-Inf, Inf),  # Older patients (age > 55)
   test = "right_sided",
   rule = "All",
-  n_burn = 2000,
-  n_it = 5000
+  n_burn = 200,
+  n_it = 500
 )
 ```
 
@@ -249,8 +249,8 @@ result_analytical <- bglm(
   x_def = c(40, 70),  # Age range 40-70
   test = "right_sided",
   rule = "All",
-  n_burn = 2000,
-  n_it = 5000
+  n_burn = 200,
+  n_it = 500
 )
 ```
 
@@ -328,8 +328,8 @@ result_all <- bglm(
   x_method = "Value",
   x_def = 55,
   rule = "All",  # Both outcomes must improve
-  n_burn = 2000,
-  n_it = 5000
+  n_burn = 200,
+  n_it = 500
 )
 ```
 
@@ -351,8 +351,8 @@ result_any <- bglm(
   x_method = "Value",
   x_def = 55,
   rule = "Any",  # At least one outcome must improve
-  n_burn = 2000,
-  n_it = 5000
+  n_burn = 200,
+  n_it = 500
 )
 ```
 
@@ -375,8 +375,8 @@ result_comp <- bglm(
   x_def = 55,
   rule = "Comp",
   w = c(0.6, 0.4),  # Pain relief weighted more heavily
-  n_burn = 2000,
-  n_it = 5000
+  n_burn = 200,
+  n_it = 500
 )
 ```
 
@@ -451,8 +451,8 @@ result_discrete <- bglm(
   x_method = "Value", # For discrete covariates, use Value method
   x_def = 0,  
   rule = "All",
-  n_burn = 2000,
-  n_it = 5000
+  n_burn = 200,
+  n_it = 500
 )
 
 print(result_discrete)
@@ -515,8 +515,8 @@ result_informative <- bglm(
   x_def = 55,
   b_mu0 = custom_b_mu0,
   b_sigma0 = custom_b_sigma0,
-  n_burn = 2000,
-  n_it = 5000
+  n_burn = 200,
+  n_it = 500
 )
 ```
 
@@ -538,8 +538,8 @@ result_skeptical <- bglm(
   x_def = 55,
   b_mu0 = skeptical_b_mu0,
   b_sigma0 = skeptical_b_sigma0,
-  n_burn = 2000,
-  n_it = 5000
+  n_burn = 200,
+  n_it = 500
 )
 ```
 
@@ -558,7 +558,7 @@ result_weak <- bglm(
   b_sigma0 = solve(diag(10, 4)),
   test = "right_sided",
   rule = "All",
-  n_burn = 2000, n_it = 5000
+  n_burn = 200, n_it = 500
 )
 
 # More informative
@@ -571,7 +571,7 @@ result_more_informative <- bglm(
   b_sigma0 = solve(diag(c(1, 5, 1, 1))),
   test = "right_sided",
   rule = "All",
-  n_burn = 2000, n_it = 5000
+  n_burn = 200, n_it = 500
 )
 ```
 
@@ -614,8 +614,8 @@ When `return_diagnostic_plots = TRUE`, `bglm()` returns diagnostic plots as well
 ```{r convergence, eval = FALSE}
 result <- bglm(
     # ... arguments ...
-    n_burn = 2000,  # Increase if convergence issues
-    n_it = 5000,
+    n_burn = 200,  # Increase if convergence issues
+    n_it = 500,
     return_diagnostics = TRUE,
     return_diagnostic_plots = TRUE
   )
@@ -643,7 +643,7 @@ result_bmvb <- bmvb(
   grp_a = "standard",
   grp_b = "new",
   y_vars = c("pain_relief", "mobility_improved"),
-  n_it = 5000
+  n_it = 500
 )
 
 # Logistic regression, full range:
@@ -656,8 +656,8 @@ result_bglm <- bglm(
   y_vars = c("pain_relief", "mobility_improved"),
   x_method = "Empirical",
   x_def = c(-Inf, Inf),
-  n_burn = 2000,
-  n_it = 5000
+  n_burn = 200,
+  n_it = 500
 )
 
 cat("Comparison:\n")
@@ -688,8 +688,8 @@ result_samples <- bglm(
   y_vars = c("pain_relief", "mobility_improved"),
   x_method = "Value",
   x_def = 65,
-  n_burn = 2000,
-  n_it = 5000,
+  n_burn = 200,
+  n_it = 500,
   return_samples = TRUE
 )
 ```

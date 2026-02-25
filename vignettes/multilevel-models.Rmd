@@ -115,9 +115,9 @@ result <- bglmm(
   random = c("Intercept"),
   test = "right_sided",
   rule = "All",
-  n_burn = 2000,
-  n_it = 5000,
-  n_thin = 5
+  n_burn = 200,
+  n_it = 500,
+  n_thin = 1
 )
 ```
 
@@ -139,27 +139,16 @@ Like `bglm()`, you can define subpopulations:
 
 ### Specific Ability Level
 
-```{r value_method, results='hide', message=FALSE, warning=FALSE, eval=TRUE}
+```{r value_method, results='hide', message=FALSE, warning=FALSE, eval = FALSE}
 set.seed(2027)
 result_value <- bglmm(
-  data = study_data,
-  grp = "method",
-  grp_a = "traditional",
-  grp_b = "new_method",
-  id_var = "school_id",
-  x_var = "baseline_ability",
-  y_vars = c("math_pass", "reading_pass"),
+  # ... other arguments ...
   x_method = "Value",
   x_def = 50,  # Average ability
-  test = "right_sided",
-  rule = "All",
-  n_burn = 2000,
-  n_it = 5000,
-  n_thin = 5
 )
 ```
 
-```{r show_value, eval=TRUE}
+```{r show_value, eval = FALSE}
 cat("Effect for students with baseline ability = 50:\n")
 cat("  Treatment difference:", result_value$delta$mean_delta, "\n")
 cat("  Posterior probability:", result_value$delta$pop, "\n")
@@ -167,58 +156,24 @@ cat("  Posterior probability:", result_value$delta$pop, "\n")
 
 ### Ability Range (Empirical)
 
-```{r empirical_method, results='hide', message=FALSE, warning=FALSE, eval=TRUE}
+```{r empirical_method, results='hide', message=FALSE, warning=FALSE, eval = FALSE}
 set.seed(2028)
 result_empirical <- bglmm(
-  data = study_data,
-  grp = "method",
-  grp_a = "traditional",
-  grp_b = "new_method",
-  id_var = "school_id",
-  x_var = "baseline_ability",
-  y_vars = c("math_pass", "reading_pass"),
+  # ... other arguments ...
   x_method = "Empirical",
-  x_def = c(40, 60),  # Middle ability range
-  test = "right_sided",
-  rule = "All",
-  n_burn = 2000,
-  n_it = 5000,
-  n_thin = 5
+  x_def = c(40,60) # Ability range 40-60
 )
-```
-
-```{r show_empirical, eval=TRUE}
-cat("Effect for students with baseline ability 40-60:\n")
-cat("  Treatment difference:", result_empirical$delta$mean_delta, "\n")
-cat("  Posterior probability:", result_empirical$delta$pop, "\n")
 ```
 
 ### Ability Range (Analytical)
 
-```{r analytical_method, results='hide', message=FALSE, warning=FALSE, eval=TRUE}
+```{r analytical_method, results='hide', message=FALSE, warning=FALSE, eval = FALSE}
 set.seed(2029)
 result_analytical <- bglmm(
-  data = study_data,
-  grp = "method",
-  grp_a = "traditional",
-  grp_b = "new_method",
-  id_var = "school_id",
-  x_var = "baseline_ability",
-  y_vars = c("math_pass", "reading_pass"),
-  x_method = "Analytical",
-  x_def = c(40, 60),
-  test = "right_sided",
-  rule = "All",
-  n_burn = 2000,
-  n_it = 5000,
-  n_thin = 5
-)
-```
-
-```{r show_analytical, eval=TRUE}
-cat("Effect for ability 40-60 (analytical integration):\n")
-cat("  Treatment difference:", result_analytical$delta$mean_delta, "\n")
-cat("  Posterior probability:", result_analytical$delta$pop, "\n")
+  # ... other arguments ...
+    x_method = "Analytical",
+    x_def = c(40,60)
+ )
 ```
 
 ## Decision Rules with Multilevel Data
@@ -336,46 +291,12 @@ tau0 <- diag(1e-1, p_random)   # Scale matrix
 - Smaller `nu0` = less informative
 - Larger `tau0` diagonal values = expect more between-cluster variation
 
-#### Custom Random Effects Priors
-
-**Example**: Expect small between-school variation
-
-```{r custom_random, results='hide', message=FALSE, warning=FALSE, eval=TRUE}
-# Small between-school variation expected
-custom_g_mu0 <- rep(0, p_random)        # Mean random effects of zero
-custom_g_sigma0 <- solve(diag(50, p_random))  # Larger prior variance
-custom_nu0 <- p_random + 2             # Weakly informative
-custom_tau0 <- diag(0.5, p_random)     # Expect small random effects variance
-
-result_custom_random <- bglmm(
-  data = study_data,
-  grp = "method",
-  grp_a = "traditional",
-  grp_b = "new_method",
-  id_var = "school_id",
-  x_var = "baseline_ability",
-  y_vars = c("math_pass", "reading_pass"),
-  x_method = "Value",
-  x_def = 50,
-  fixed = c("method",  "method_baseline_ability"),
-  random = c("Intercept", "baseline_ability"),
-  b_mu0 = custom_b_mu0,
-  b_sigma0 = custom_b_sigma0,
-  g_mu0 = custom_g_mu0,
-  g_sigma0 = custom_g_sigma0,
-  nu0 = custom_nu0,
-  tau0 = custom_tau0,
-  n_burn = 2000,
-  n_it = 5000,
-  n_thin = 5
-)
-```
 
 ### Prior Sensitivity Analysis
 
 Compare results under different priors:
 
-```{r prior_sensitivity, results='hide', message=FALSE, warning=FALSE, eval=TRUE}
+```{r prior_sensitivity, results='hide', message=FALSE, warning=FALSE, eval = FALSE}
 # -----------------------------------------------------------------
 # Three priors that pull in clearly different directions.
 # -----------------------------------------------------------------
@@ -383,100 +304,28 @@ Compare results under different priors:
 # 1. Weakly informative (neutral starting point)
 #    Diffuse on fixed effects, diffuse IW for random effects.
 result_weak <- bglmm(
-  data = study_data,
-  grp = "method",
-  grp_a = "traditional",
-  grp_b = "new_method",
-  id_var = "school_id",
-  x_var = "baseline_ability",
-  y_vars = c("math_pass", "reading_pass"),
-  x_method = "Value",
-  x_def = 50,
-  fixed = c("method",  "method_baseline_ability"),
-  random = c("Intercept", "baseline_ability"),
+  # ... other arguments ...
   b_mu0    = rep(0, p_fixed),
   b_sigma0 = solve(diag(10, p_fixed)),
   g_mu0    = rep(0, p_random),
   g_sigma0 = solve(diag(10, p_random)),
   nu0  = p_random,
   tau0 = diag(0.1, p_random),
-  test = "right_sided",
-  rule = "All",
-  n_burn = 2000,
-  n_it = 5000,
-  n_thin = 5
 )
 
 # 2. Skeptical prior
 #    Tight variance so the prior resists positive or negative evidence. 
 #    Also a small tau0, implying homogeneity between schools.
 result_skeptical <- bglmm(
-  data = study_data,
-  grp = "method",
-  grp_a = "traditional",
-  grp_b = "new_method",
-  id_var = "school_id",
-  x_var = "baseline_ability",
-  y_vars = c("math_pass", "reading_pass"),
-  x_method = "Value",
-  x_def = 50,
+  # ... other arguments ...
   b_mu0    = rep(0, p_fixed),               
   b_sigma0 = solve(diag(c(1, 1), p_fixed)),  # Tight — hard(er) to overcome
   g_mu0    = rep(0, p_random),
   g_sigma0 = solve(diag(c(1, 1), p_random)), # Tight — hard(er) to overcome
   nu0  = p_random + 4,                 # More informative IW
   tau0 = diag(0.05, p_random),         # Expects small school variation
-  test = "right_sided",
-  rule = "All",
-  n_burn = 2000,
-  n_it = 5000,
-  n_thin = 5
 )
 
-# 3. Informative prior (favours treatment)
-#    Positive prior mean on the interaction, moderately tight.
-#    Large tau0 expects substantial school-to-school variation.
-result_informative <- bglmm(
-  data = study_data,
-  grp = "method",
-  grp_a = "traditional",
-  grp_b = "new_method",
-  id_var = "school_id",
-  x_var = "baseline_ability",
-  y_vars = c("math_pass", "reading_pass"),
-  x_method = "Value",
-  x_def = 50,
-  fixed = c("method",  "method_baseline_ability"),
-  random = c("Intercept", "baseline_ability"),
-  b_mu0    = c(0, 0.8),                # Expects positive interaction
-  b_sigma0 = solve(diag(c(2, 1), p_fixed)),  
-  g_mu0    = c(0.5, 0),                # Slight positive school-level intercept
-  g_sigma0 = solve(diag(c(2, 1), p_random)),
-  nu0  = p_random + 2,
-  tau0 = diag(1.0, p_random),          # Expects large school-level variance
-  test = "right_sided",
-  rule = "All",
-  n_burn = 2000,
-  n_it = 5000,
-  n_thin = 5
-)
-```
-
-```{r compare_priors, eval=TRUE}
-cat("Prior Sensitivity Analysis\n")
-cat("==========================\n\n")
-
-cat("1. Weakly informative (neutral):\n")
-cat("   Posterior prob:", result_weak$delta$pop, "\n")
-cat("   Mean delta:    ", result_weak$delta$mean_delta, "\n\n")
-
-cat("2. Sceptical (tight tau0):\n")
-cat("   Posterior prob:", result_skeptical$delta$pop, "\n")
-cat("   Mean delta:    ", result_skeptical$delta$mean_delta, "\n\n")
-
-cat("3. Informative (positive prior on interaction, large tau0):\n")
-cat("   Posterior prob:", result_informative$delta$pop, "\n")
-cat("   Mean delta:    ", result_informative$delta$mean_delta, "\n\n")
 ```
 
 **Interpretation**: 
@@ -501,7 +350,7 @@ cat("   Mean delta:    ", result_informative$delta$mean_delta, "\n\n")
 
 4. **Prior sensitivity**: Check:
   
-```{r prior_check, eval=TRUE}
+```{r prior_check, eval = FALSE}
    # Run with default priors
    # Run with informative priors
    # Compare posterior probabilities and effect sizes
@@ -548,9 +397,9 @@ result_diag <- bglmm(
   y_vars = c("math_pass", "reading_pass"),
   x_method = "Value",
   x_def = 50,
-  n_burn = 2000,
-  n_it = 5000,
-  n_thin = 5,
+  n_burn = 200,
+  n_it = 500,
+  n_thin = 1,
   start = c(0.5, 1),
   return_diagnostics = TRUE
 )
@@ -618,26 +467,15 @@ For more information on MCMC diagnostics, consult
 
 ## Extracting Posterior Samples
 
-```{r samples, results='hide', message=FALSE, warning=FALSE, eval=TRUE}
+```{r samples, results='hide', message=FALSE, warning=FALSE, eval = FALSE}
 set.seed(2031)
 result_samples <- bglmm(
-  data = study_data,
-  grp = "method",
-  grp_a = "traditional",
-  grp_b = "new_method",
-  id_var = "school_id",
-  x_var = "baseline_ability",
-  y_vars = c("math_pass", "reading_pass"),
-  x_method = "Value",
-  x_def = 50,
-  n_burn = 2000,
-  n_it = 5000,
-  n_thin = 5,
+# ... other arguments ...
   return_samples = TRUE
 )
 ```
 
-```{r use_samples, eval=TRUE}
+```{r use_samples, eval = FALSE}
 # Treatment effect samples
 str(result_samples$samples$delta)
 
@@ -683,9 +521,9 @@ For reliable multilevel modeling:
 **Problem**: MPSRF > 1.1
 
 **Solutions**:
-1. Increase burn-in: `n_burn = 20000` or higher
-2. Increase iterations: `n_it = 50000` or higher
-3. Reduce thinning: `n_thin = 2` (keeps more samples)
+1. Increase burn-in: `n_burn = 2000` or higher
+2. Increase iterations: `n_it = 5000` or higher
+3. Reduce thinning: `n_thin = 1` (keeps more samples)
 4. Check data quality (outliers, sufficient variation)
 
 ### Slow computation

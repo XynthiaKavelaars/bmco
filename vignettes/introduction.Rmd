@@ -64,7 +64,7 @@ result <- bmvb(
   y_vars = c("symptom_relief", "quality_of_life"),
   test = "right_sided",
   rule = "All",
-  n_it = 5000
+  n_it = 1000
 )
 
 print(result)
@@ -80,7 +80,7 @@ The package provides three main functions for different scenarios:
 
 **Use when**: Comparing two groups on multiple binary outcomes. Currently supported for two outcomes only.
 
-```{r bmvb_example, eval=FALSE}
+```{r bmvb_example, eval=TRUE}
 # Compare two teaching methods on two outcomes
 bmvb(
   data = trial_data,
@@ -89,7 +89,7 @@ bmvb(
   grp_b = "drug",
   y_vars = c("symptom_relief", "quality_of_life"),
   rule = "All",
-  n_it = 5000
+  n_it = 1000
 )
 ```
 
@@ -101,7 +101,7 @@ For more details on statistical methodology or when using this function, please 
 
 **Use when**: Comparing two subgroups on multiple binary outcomes (e.g., age range, particular baseline severity). Currently supported for two outcomes only.
 
-```{r bglm_example, eval=FALSE}
+```{r bglm_example, eval=TRUE}
 # Add age covariate
 trial_data$age <- rnorm(100, mean = 50, sd = 10)
 
@@ -115,8 +115,8 @@ result_bglm <- bglm(
   x_method = "Empirical",
   x_def = c(-Inf, Inf),
   rule = "All",
-  n_burn = 1000,
-  n_it = 3000
+  n_burn = 200,
+  n_it = 500
 )
 ```
 
@@ -130,7 +130,7 @@ Also see the "Subgroup analysis" vignette for details.
 
 **Use when**: Comparing two (sub)groups on multiple binary outcomes, when data are clustered (patients within hospitals, students within schools).
 
-```{r bglmm_example, eval=FALSE}
+```{r bglmm_example, eval=TRUE}
 # Add cluster variable
 trial_data$hospital <- rep(1:10, each = 10)
 
@@ -145,8 +145,8 @@ result_bglmm <- bglmm(
   x_method = "Empirical",
   x_def = c(-Inf, Inf),
   rule = "All",
-  n_burn = 1000,
-  n_it = 3000,
+  n_burn = 200,
+  n_it = 500,
   n_thin = 3
 )
 ```
@@ -333,7 +333,7 @@ For subgroup analysis: see @Kavelaars2024.
 
 Default settings usually work, but you can adjust:
 
-```{r mcmc_settings, eval=FALSE}
+```{r mcmc_settings, eval=TRUE}
 bmvb(
   data = trial_data,
   grp = "treatment",
@@ -346,7 +346,7 @@ bmvb(
 
 For `bglm()` and `bglmm()`:
 
-```{r mcmc_settings_reg, eval=FALSE}
+```{r mcmc_settings_reg, eval = FALSE}
 bglm(
   # ... arguments ...
   n_burn = 2000,  # Burn-in / warm-up iterations
@@ -359,7 +359,7 @@ bglm(
 
 Missing values are automatically handled via complete-case analysis:
 
-```{r missing_data, eval=FALSE}
+```{r missing_data, eval=TRUE}
 # Introduce missing data
 trial_data_missing <- trial_data
 trial_data_missing$symptom_relief[1:5] <- NA
@@ -370,7 +370,7 @@ result_missing <- bmvb(
   grp_a = "placebo",
   grp_b = "drug",
   y_vars = c("symptom_relief", "quality_of_life"),
-  n_it = 5000
+  n_it = 1000
 )
 
 # Sample sizes are reduced
@@ -381,7 +381,7 @@ result_missing$sample_sizes
 
 ### Traditional approach
 
-```{r frequentist, eval=FALSE}
+```{r frequentist, eval=TRUE}
 # Separate tests for each outcome
 chisq_symptom <- chisq.test(table(trial_data$treatment, trial_data$symptom_relief))
 chisq_qol <- chisq.test(table(trial_data$treatment, trial_data$quality_of_life))
@@ -394,7 +394,7 @@ cat("  Bonferroni-adjusted alpha: 0.025 (needed for Any-rule only; not needed fo
 
 ### Bayesian approach
 
-```{r bayesian, eval=FALSE}
+```{r bayesian, eval=TRUE}
 result_bayes <- bmvb(
   data = trial_data,
   grp = "treatment",
@@ -402,7 +402,7 @@ result_bayes <- bmvb(
   grp_b = "drug",
   y_vars = c("symptom_relief", "quality_of_life"),
   rule = "All",
-  n_it = 5000
+  n_it = 1000
 )
 
 cat("Bayesian result:\n")

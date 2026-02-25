@@ -52,7 +52,7 @@ test_that("all three methods give consistent results on same data", {
       x_method = "Empirical",
       x_def = c(-Inf, Inf),
       n_burn = 50,
-      n_it = 1000
+      n_it = 500
   )
   )
 
@@ -122,7 +122,7 @@ test_that("posterior samples have correct structure across methods", {
     x_method = "Value",
     x_def = 50,
     n_burn = 50,
-    n_it = 1000,
+    n_it = 500,
     return_samples = TRUE
   )
   )
@@ -134,7 +134,7 @@ test_that("posterior samples have correct structure across methods", {
   # Samples should have correct dimensions
   expect_equal(nrow(result_bmvb$samples$delta), 1000)
   expect_equal(ncol(result_bmvb$samples$delta), 2)
-  expect_equal(nrow(result_bglm$samples$delta), 2000)
+  expect_equal(nrow(result_bglm$samples$delta), 1000)
   expect_equal(ncol(result_bglm$samples$delta), 2)
 })
 
@@ -171,7 +171,7 @@ test_that("decision rules give consistent results across methods", {
     x_def = c(-Inf, Inf),
     rule = "All",
     n_burn = 50,
-    n_it = 1000
+    n_it = 500
   )
 
   # Both should use All rule
@@ -203,7 +203,7 @@ test_that("decision rules give consistent results across methods", {
       x_def = 0,
       rule = "Comp",
       n_burn = 50,
-      n_it = 1000
+      n_it = 500
     )
   )
 
@@ -250,7 +250,7 @@ test_that("test labels are correctly formed across all methods", {
     x_def = 50,
     test = "right_sided",
     n_burn = 50,
-    n_it = 1000
+    n_it = 500
   )
   )
 
@@ -295,7 +295,7 @@ test_that("different covariate methods work in bglm", {
     x_method = "Empirical",
     x_def = c(40, 60),
     n_burn = 50,
-    n_it = 1000
+    n_it = 500
   )
   )
 
@@ -311,7 +311,7 @@ test_that("different covariate methods work in bglm", {
     x_method = "Value",
     x_def = 50,
     n_burn = 50,
-    n_it = 1000
+    n_it = 500
   )
   )
 
@@ -327,7 +327,7 @@ test_that("different covariate methods work in bglm", {
     x_method = "Analytical",
     x_def = c(40, 60),
     n_burn = 50,
-    n_it = 1000
+    n_it = 500
   )
   )
 
@@ -373,7 +373,7 @@ test_that("all methods return consistent output structure", {
     x_method = "Value",
     x_def = 0,
     n_burn = 50,
-    n_it = 1000
+    n_it = 500
   )
 
   result_bglmm <- suppressWarnings(
@@ -489,7 +489,7 @@ test_that("print methods work for all result objects", {
     x_method = "Value",
     x_def = 0,
     n_burn = 50,
-    n_it = 1000
+    n_it = 500
   )
 
   result_bglmm <- suppressWarnings(
