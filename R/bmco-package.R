@@ -6,8 +6,8 @@
 #' @section Main functions:
 #' \itemize{
 #'   \item \code{\link{bmvb}}: Basic Bayesian test using multivariate Bernoulli
-#'   \item \code{\link{bglm}}: Test with covariate adjustment
-#'   \item \code{\link{bglmm}}: Multilevel/clustered data analysis
+#'   \item \code{\link{bglm}}: Subgroup analysis
+#'   \item \code{\link{bglmm}}: Multilevel data
 #' }
 #'
 #' @docType package
