@@ -73,21 +73,79 @@ If NULL and rule = "Comp", equal weights are used. Default is NULL.}
 
 \item{return_diagnostics}{Logical. Return MCMC diagnostics? Default is TRUE.}
 
-\item{return_diagnostic_plots}{Logical. Should diagnostic plots (traceplots, autocorrelation, density) be returned? Default is \code{FALSE}. If \code{TRUE}, diagnostics are returned by default.}
+\item{return_diagnostic_plots}{Logical. Should MCMC chains for diagnostic plots (traceplots, autocorrelation, density) be returned? Default is \code{FALSE}. If \code{TRUE}, diagnostics are returned by default.}
 
 \item{return_samples}{Logical. Should posterior samples be returned? Default is FALSE.}
 }
 \value{
-A list of class "bglm" containing:
+An object of class \code{bglm}, a list containing:
 \describe{
-\item{estimates}{Posterior estimates for each group and regression parameters}
-\item{sample_sizes}{Sample sizes for each group}
-\item{delta}{Treatment effect estimates and posterior probability}
-\item{info}{Test specifications}
-\item{samples}{Posterior samples (if return_samples = TRUE)}
+\item{estimates}{A list with posterior means and standard deviations of
+group probabilities (\code{mean_a}, \code{mean_b}, \code{sd_a}, \code{sd_b}),
+as well as posterior means (\code{b}) and standard deviations (\code{b_sd})
+of the regression coefficients.}
+\item{sample_sizes}{A list with group sample sizes (\code{n_a}, \code{n_b}).}
+\item{delta}{A list with posterior mean differences (\code{mean_delta}),
+posterior standard errors (\code{se_delta}), posterior probability of the
+hypothesis (\code{pop}), and, if \code{rule = "Comp"}, the weighted
+difference (\code{w_delta}).}
+\item{info}{A list with prior specifications, test settings, group labels,
+covariate handling method, and subpopulation definition.}
+\item{diags}{If diagnostics are requested, a list with MCMC diagnostic
+results for the regression coefficients.}
+\item{samples}{If \code{return_samples = TRUE}, a list containing posterior
+draws of \code{theta_a}, \code{theta_b}, \code{delta}, and regression
+coefficients.}
 }
 }
 \description{
 Perform a Bayesian test for differences between two (sub)groups on multiple binary outcomes
-using multinomial logistic regression.
+using multinomial logistic regression as described in \insertCite{Kavelaars2024;textual}{bmco}.
+}
+\examples{
+# Example with simulated data
+# Generate data
+set.seed(123)
+n <- 100
+
+data <- data.frame(
+ group = rep(c("A", "B"), each = n/2),
+ x = rnorm(n),
+ stringsAsFactors = FALSE
+)
+
+p1 <- p2 <- rep(NA, n)
+
+for (i in 1:n) {
+ grpB <- ifelse(data$group[i] == "B", 1, 0)
+
+ p1[i] <- plogis(-0.50 + 0.75 * grpB + 0.10 * data$x[i] + 0.20 * grpB * data$x[i])
+ p2[i] <- plogis(-0.50 + 0.80 * grpB + 0.05 * data$x[i] + 0.15 * grpB * data$x[i])
+
+ data$y1[i] <- rbinom(1, 1, p1[i])
+ data$y2[i] <- rbinom(1, 1, p2[i])
+}
+
+# Analyze
+result <- bglm(
+ data = data,
+ grp = "group",
+ grp_a = "A",
+ grp_b = "B",
+ x_var = "x",
+ y_vars = c("y1", "y2"),
+ x_method = "Empirical",
+ x_def = c(-Inf, Inf),
+ test = "right_sided",
+ rule = "All",
+ n_burn = 100, # Too low for proper MCMC sampling
+ n_it = 500 # Too low for proper MCMC sampling
+)
+
+print(result)
+}
+\references{
+{
+\insertRef{Kavelaars2024}{bmco}
+}
 }

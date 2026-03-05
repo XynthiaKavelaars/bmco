@@ -23,3 +23,4 @@ Invisibly returns NULL.
 \description{
 Generate a specific type of diagnostic plot for MCMC chains.
 }
+\keyword{internal}

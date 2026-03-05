@@ -44,9 +44,11 @@ test_that("bglm runs with valid input", {
 #### Test 2: Return Samples ####
 test_that("bglm returns samples when requested", {
   test_data <- make_bglm_data(seed = 124)
-  result <- bglm(
+  result <- suppressWarnings(
+    bglm(
     data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
     x_var = "x", y_vars = c("y1", "y2"), n_it = 500, return_samples = TRUE
+  )
   )
   expect_true("samples" %in% names(result))
   expect_type(result$samples$theta_a, "double")
@@ -128,10 +130,12 @@ test_that("equal weights are used by default for Comp rule", {
 #### Test 7: Prior Parameters ####
 test_that("different prior parameters can be specified", {
   test_data <- make_bglm_data(seed = 129)
-  result <- bglm(
+  result <- suppressWarnings(
+    bglm(
     data = test_data, grp = "grp", grp_a = "A", grp_b = "B",
     x_var = "x", y_vars = c("y1", "y2"),
     b_mu0 = 1, b_sigma0 = 1e-1, n_it = 500
+  )
   )
   expect_s3_class(result, "bglm")
 })
@@ -489,7 +493,7 @@ test_that("print method works", {
     x_var = "x", y_vars = c("y1", "y2"), n_it = 500
   )
   expect_output(print(result), "Bayesian Multivariate Logistic Regression")
-  expect_output(print(result), "Group Estimates")
+  expect_output(print(result), "Group")
   expect_output(print(result), "Posterior probability")
 })
 

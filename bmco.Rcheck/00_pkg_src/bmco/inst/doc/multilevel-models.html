@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Subgroup Analysis with Multivariate Binary Outcomes in Multilevel Data</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Subgroup Analysis with Multivariate Binary
+Outcomes in Multilevel Data</h1>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>When data are clustered (e.g., students within schools, patients
+within hospitals), observations are not independent. Ignoring this
+clustering can lead to:</p>
+<ul>
+<li>Underestimated standard errors</li>
+<li>Inflated Type I error rates</li>
+<li>Invalid inference</li>
+<li>Under- or overpowered decisions</li>
+</ul>
+<p>The <code>bglmm()</code> function extends <code>bglm()</code> to
+handle clustered data by incorporating <strong>random
+effects</strong>.</p>
+</div>
+<div id="when-to-use-multilevel-models" class="section level2">
+<h2>When to Use Multilevel Models</h2>
+<p>Use <code>bglmm()</code> when:</p>
+<ul>
+<li>Observations are grouped into clusters (schools, hospitals,
+families, etc.);</li>
+<li>Cluster variation affects outcomes</li>
+<li>Clustering is theoretically meaningful</li>
+</ul>
+<p>Use <code>bglm()</code> when:</p>
+<ul>
+<li>Data are not clustered; AND</li>
+<li>Clustering is not theoretically meaningful</li>
+</ul>
+</div>
+<div id="example-educational-intervention-study" class="section level2">
+<h2>Example: Educational Intervention Study</h2>
+<p>We’ll analyze a study comparing two teaching methods across 20
+schools on reading and math ability, differentiating on student baseline
+ability.</p>
+<div id="generate-example-data" class="section level3">
+<h3>Generate Example Data</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(bmco)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2020</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>n_schools <span class="ot">&lt;-</span> <span class="dv">20</span> </span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>n_per_school <span class="ot">&lt;-</span> <span class="dv">15</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>n_total <span class="ot">&lt;-</span> n_schools <span class="sc">*</span> n_per_school</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co"># Generate random intercepts</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>school_intercepts_math <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_schools, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fl">1.50</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>school_intercepts_reading <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_schools, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fl">1.50</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co"># Cluster randomization: whole schools receive the same method.</span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>school_method <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;traditional&quot;</span>, <span class="st">&quot;new_method&quot;</span>), <span class="at">each =</span> n_schools<span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>study_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>  <span class="at">school_id =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>n_schools, <span class="at">each =</span> n_per_school)),</span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>  <span class="at">method =</span> <span class="fu">rep</span>(school_method, <span class="at">each =</span> n_per_school),</span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>  <span class="at">baseline_ability =</span> <span class="fu">rnorm</span>(n_total, <span class="at">mean =</span> <span class="dv">50</span>, <span class="at">sd =</span> <span class="dv">10</span>),</span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>)</span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a><span class="co"># Standardize covariate</span></span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a>study_data<span class="sc">$</span>baseline_ability_std <span class="ot">&lt;-</span> <span class="fu">scale</span>(study_data<span class="sc">$</span>baseline_ability)[, <span class="dv">1</span>]</span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a>study_data<span class="sc">$</span>math_pass <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a>study_data<span class="sc">$</span>reading_pass <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a>p_math <span class="ot">&lt;-</span> p_reading <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="fu">nrow</span>(study_data))</span>
+<span id="cb1-29"><a href="#cb1-29" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(study_data)) {</span>
+<span id="cb1-31"><a href="#cb1-31" tabindex="-1"></a>  school <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(study_data<span class="sc">$</span>school_id[i])</span>
+<span id="cb1-32"><a href="#cb1-32" tabindex="-1"></a>  is_new <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(study_data<span class="sc">$</span>method[i] <span class="sc">==</span> <span class="st">&quot;new_method&quot;</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" tabindex="-1"></a>  p_math[i]    <span class="ot">&lt;-</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="fl">0.50</span> <span class="sc">+</span> <span class="fl">0.75</span> <span class="sc">*</span> is_new <span class="sc">+</span> <span class="fl">0.10</span> <span class="sc">*</span> study_data<span class="sc">$</span>baseline_ability_std[i] <span class="sc">+</span> </span>
+<span id="cb1-35"><a href="#cb1-35" tabindex="-1"></a>                           <span class="fl">0.20</span> <span class="sc">*</span> is_new <span class="sc">*</span> study_data<span class="sc">$</span>baseline_ability_std[i] <span class="sc">+</span> </span>
+<span id="cb1-36"><a href="#cb1-36" tabindex="-1"></a>                           school_intercepts_math[school])</span>
+<span id="cb1-37"><a href="#cb1-37" tabindex="-1"></a>  p_reading[i] <span class="ot">&lt;-</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="fl">0.50</span> <span class="sc">+</span> <span class="fl">0.80</span> <span class="sc">*</span> is_new <span class="sc">+</span> <span class="fl">0.05</span> <span class="sc">*</span> study_data<span class="sc">$</span>baseline_ability_std[i] <span class="sc">+</span> </span>
+<span id="cb1-38"><a href="#cb1-38" tabindex="-1"></a>                           <span class="fl">0.15</span> <span class="sc">*</span> is_new <span class="sc">*</span> study_data<span class="sc">$</span>baseline_ability_std[i] <span class="sc">+</span> </span>
+<span id="cb1-39"><a href="#cb1-39" tabindex="-1"></a>                           school_intercepts_reading[school])</span>
+<span id="cb1-40"><a href="#cb1-40" tabindex="-1"></a>  </span>
+<span id="cb1-41"><a href="#cb1-41" tabindex="-1"></a>  study_data<span class="sc">$</span>math_pass[i]    <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, <span class="dv">1</span>, p_math[i])</span>
+<span id="cb1-42"><a href="#cb1-42" tabindex="-1"></a>  study_data<span class="sc">$</span>reading_pass[i] <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, <span class="dv">1</span>, p_reading[i])</span>
+<span id="cb1-43"><a href="#cb1-43" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="fit-multilevel-model" class="section level3">
+<h3>Fit Multilevel Model</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2025</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">bglmm</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="at">data =</span> study_data,</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="at">grp =</span> <span class="st">&quot;method&quot;</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="at">grp_a =</span> <span class="st">&quot;traditional&quot;</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="at">grp_b =</span> <span class="st">&quot;new_method&quot;</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  <span class="at">id_var =</span> <span class="st">&quot;school_id&quot;</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>  <span class="at">x_var =</span> <span class="st">&quot;baseline_ability&quot;</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>  <span class="at">y_vars =</span> <span class="fu">c</span>(<span class="st">&quot;math_pass&quot;</span>, <span class="st">&quot;reading_pass&quot;</span>),</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>  <span class="at">x_method =</span> <span class="st">&quot;Empirical&quot;</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>  <span class="at">x_def =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>, <span class="cn">Inf</span>),</span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>  <span class="at">fixed =</span> <span class="fu">c</span>(<span class="st">&quot;method&quot;</span>, <span class="st">&quot;baseline_ability&quot;</span>, <span class="st">&quot;method_baseline_ability&quot;</span>),</span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>  <span class="at">random =</span> <span class="fu">c</span>(<span class="st">&quot;Intercept&quot;</span>),</span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>  <span class="at">test =</span> <span class="st">&quot;right_sided&quot;</span>,</span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a>  <span class="at">rule =</span> <span class="st">&quot;All&quot;</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a>  <span class="at">n_burn =</span> <span class="dv">200</span>,</span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a>  <span class="at">n_it =</span> <span class="dv">500</span>,</span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a>  <span class="at">n_thin =</span> <span class="dv">1</span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">print</span>(result)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt; Bayesian Multilevel Multivariate Logistic Regression</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; ======================================================</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt;        Group mean y1 mean y2</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt;  traditional   0.416   0.546</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt;   new_method   0.537   0.634</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt;   J = 20 clusters    n(traditional) = 150    n(new_method) = 150</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; Posterior probability P(new_method &gt; traditional) [All rule]: 0.980</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; Marginalization: Empirical over [-Inf, Inf]</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; MPSRF: fixed = 10.9836    random = 1.3948    variance = 5.4158</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; Use summary() for full coefficient tables, priors and MCMC diagnostics.</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="fu">summary</span>(result)</span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; Bayesian Multilevel Multivariate Logistic Regression</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; ======================================================</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co">#&gt; Multilevel Structure:  J = 20 clusters    n(traditional) = 150    n(new_method) = 150</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a><span class="co">#&gt; Group Estimates:</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="co">#&gt;        Group mean y1 sd y1 mean y2 sd y2</span></span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a><span class="co">#&gt;  traditional   0.416 0.030   0.546 0.033</span></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a><span class="co">#&gt;   new_method   0.537 0.031   0.634 0.032</span></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a><span class="co">#&gt; Treatment Effect:</span></span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a><span class="co">#&gt;   Delta mean (y1, y2): 0.121, 0.088</span></span>
+<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a><span class="co">#&gt;   Delta SE   (y1, y2): 0.002, 0.002</span></span>
+<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a><span class="co">#&gt;   Posterior probability P(new_method &gt; traditional): 0.980</span></span>
+<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a><span class="co">#&gt; Fixed Effects (mean [SD]):</span></span>
+<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a><span class="co">#&gt;                                   b11           b10            b01</span></span>
+<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a><span class="co">#&gt; method                  3.693 [5.041] 2.346 [3.905]  3.596 [4.233]</span></span>
+<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a><span class="co">#&gt; baseline_ability        0.021 [0.032] 0.045 [0.024] -0.005 [0.027]</span></span>
+<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a><span class="co">#&gt; method_baseline_ability 0.233 [0.205] 0.155 [0.194]  0.216 [0.191]</span></span>
+<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a><span class="co">#&gt; Random Effects (population mean [SD]):</span></span>
+<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a><span class="co">#&gt;                      g11            g10           g01</span></span>
+<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a><span class="co">#&gt; Intercept -0.241 [2.605] -1.000 [2.675] 1.010 [2.475]</span></span>
+<span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a><span class="co">#&gt; Variance Components (posterior mean):</span></span>
+<span id="cb3-44"><a href="#cb3-44" tabindex="-1"></a><span class="co">#&gt;   y1=1, y2=1 (b11):</span></span>
+<span id="cb3-45"><a href="#cb3-45" tabindex="-1"></a><span class="co">#&gt;           Intercept</span></span>
+<span id="cb3-46"><a href="#cb3-46" tabindex="-1"></a><span class="co">#&gt; Intercept   1029.96</span></span>
+<span id="cb3-47"><a href="#cb3-47" tabindex="-1"></a><span class="co">#&gt;   y1=1, y2=0 (b10):</span></span>
+<span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a><span class="co">#&gt;           Intercept</span></span>
+<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a><span class="co">#&gt; Intercept   544.973</span></span>
+<span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a><span class="co">#&gt;   y1=0, y2=1 (b01):</span></span>
+<span id="cb3-51"><a href="#cb3-51" tabindex="-1"></a><span class="co">#&gt;           Intercept</span></span>
+<span id="cb3-52"><a href="#cb3-52" tabindex="-1"></a><span class="co">#&gt; Intercept   712.445</span></span>
+<span id="cb3-53"><a href="#cb3-53" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-54"><a href="#cb3-54" tabindex="-1"></a><span class="co">#&gt; Prior Specification:</span></span>
+<span id="cb3-55"><a href="#cb3-55" tabindex="-1"></a><span class="co">#&gt;   Fixed effects -- Normal prior:</span></span>
+<span id="cb3-56"><a href="#cb3-56" tabindex="-1"></a><span class="co">#&gt;     Mean:      0, 0, 0 </span></span>
+<span id="cb3-57"><a href="#cb3-57" tabindex="-1"></a><span class="co">#&gt;     Variance:  10, 10, 10 </span></span>
+<span id="cb3-58"><a href="#cb3-58" tabindex="-1"></a><span class="co">#&gt;   Random effects -- Normal prior:</span></span>
+<span id="cb3-59"><a href="#cb3-59" tabindex="-1"></a><span class="co">#&gt;     Mean:      0 </span></span>
+<span id="cb3-60"><a href="#cb3-60" tabindex="-1"></a><span class="co">#&gt;     Variance:  10 </span></span>
+<span id="cb3-61"><a href="#cb3-61" tabindex="-1"></a><span class="co">#&gt;   Covariance -- Inverse-Wishart: df = 1</span></span>
+<span id="cb3-62"><a href="#cb3-62" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-63"><a href="#cb3-63" tabindex="-1"></a><span class="co">#&gt; Marginalization:</span></span>
+<span id="cb3-64"><a href="#cb3-64" tabindex="-1"></a><span class="co">#&gt;   Method: Empirical    (Sub)population: [-Inf, Inf]</span></span>
+<span id="cb3-65"><a href="#cb3-65" tabindex="-1"></a><span class="co">#&gt;   Decision rule: All</span></span>
+<span id="cb3-66"><a href="#cb3-66" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-67"><a href="#cb3-67" tabindex="-1"></a><span class="co">#&gt; MCMC Convergence Diagnostics:</span></span>
+<span id="cb3-68"><a href="#cb3-68" tabindex="-1"></a><span class="co">#&gt;   Fixed effects -- MPSRF: 10.9836</span></span>
+<span id="cb3-69"><a href="#cb3-69" tabindex="-1"></a><span class="co">#&gt;                       Parameter  ESS   Rhat</span></span>
+<span id="cb3-70"><a href="#cb3-70" tabindex="-1"></a><span class="co">#&gt;                   b11_method[1] 36.9 7.0948</span></span>
+<span id="cb3-71"><a href="#cb3-71" tabindex="-1"></a><span class="co">#&gt;         b11_baseline_ability[2] 10.7 1.2712</span></span>
+<span id="cb3-72"><a href="#cb3-72" tabindex="-1"></a><span class="co">#&gt;  b11_method_baseline_ability[3] 12.9 5.4743</span></span>
+<span id="cb3-73"><a href="#cb3-73" tabindex="-1"></a><span class="co">#&gt;                   b10_method[1] 41.2 3.5012</span></span>
+<span id="cb3-74"><a href="#cb3-74" tabindex="-1"></a><span class="co">#&gt;         b10_baseline_ability[2] 17.5 1.1125</span></span>
+<span id="cb3-75"><a href="#cb3-75" tabindex="-1"></a><span class="co">#&gt;  b10_method_baseline_ability[3] 19.8 5.4723</span></span>
+<span id="cb3-76"><a href="#cb3-76" tabindex="-1"></a><span class="co">#&gt;                   b01_method[1] 19.1 2.4033</span></span>
+<span id="cb3-77"><a href="#cb3-77" tabindex="-1"></a><span class="co">#&gt;         b01_baseline_ability[2] 11.4 1.6787</span></span>
+<span id="cb3-78"><a href="#cb3-78" tabindex="-1"></a><span class="co">#&gt;  b01_method_baseline_ability[3] 10.6 5.5842</span></span>
+<span id="cb3-79"><a href="#cb3-79" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-80"><a href="#cb3-80" tabindex="-1"></a><span class="co">#&gt;   Random effects -- MPSRF: 1.3948</span></span>
+<span id="cb3-81"><a href="#cb3-81" tabindex="-1"></a><span class="co">#&gt;         Parameter   ESS   Rhat</span></span>
+<span id="cb3-82"><a href="#cb3-82" tabindex="-1"></a><span class="co">#&gt;  g11_Intercept[1] 565.3 1.1999</span></span>
+<span id="cb3-83"><a href="#cb3-83" tabindex="-1"></a><span class="co">#&gt;  g10_Intercept[1] 515.1 1.5451</span></span>
+<span id="cb3-84"><a href="#cb3-84" tabindex="-1"></a><span class="co">#&gt;  g01_Intercept[1] 512.2 1.2905</span></span>
+<span id="cb3-85"><a href="#cb3-85" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-86"><a href="#cb3-86" tabindex="-1"></a><span class="co">#&gt;   Variance components -- MPSRF: 5.4158</span></span>
+<span id="cb3-87"><a href="#cb3-87" tabindex="-1"></a><span class="co">#&gt;               Parameter   ESS   Rhat</span></span>
+<span id="cb3-88"><a href="#cb3-88" tabindex="-1"></a><span class="co">#&gt;  g11_InterceptIntercept  89.5 4.4046</span></span>
+<span id="cb3-89"><a href="#cb3-89" tabindex="-1"></a><span class="co">#&gt;  g10_InterceptIntercept 106.7 4.9981</span></span>
+<span id="cb3-90"><a href="#cb3-90" tabindex="-1"></a><span class="co">#&gt;  g01_InterceptIntercept 305.3 4.5160</span></span></code></pre></div>
+</div>
+<div id="interpretation" class="section level3">
+<h3>Interpretation</h3>
+<p>The posterior probability indicates the probability that the new
+teaching method improves <strong>both</strong> math and reading outcomes
+(rule = “All”), accounting for:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Fixed effects</strong>: Overall method effect, baseline
+ability effect, and their interaction</li>
+<li><strong>Random effects</strong>: School-specific deviations from the
+overall pattern</li>
+<li><strong>Clustering</strong>: Within-school correlation of student
+outcomes</li>
+</ol>
+</div>
+</div>
+<div id="specifying-population-of-interest" class="section level2">
+<h2>Specifying Population of Interest</h2>
+<p>Like <code>bglm()</code>, you can define subpopulations:</p>
+<div id="specific-ability-level" class="section level3">
+<h3>Specific Ability Level</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2027</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>result_value <span class="ot">&lt;-</span> <span class="fu">bglmm</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="co"># ... other arguments ...</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="at">x_method =</span> <span class="st">&quot;Value&quot;</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="at">x_def =</span> <span class="dv">50</span>,  <span class="co"># Average ability</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Effect for students with baseline ability = 50:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;  Treatment difference:&quot;</span>, result_value<span class="sc">$</span>delta<span class="sc">$</span>mean_delta, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;  Posterior probability:&quot;</span>, result_value<span class="sc">$</span>delta<span class="sc">$</span>pop, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</div>
+<div id="ability-range-empirical" class="section level3">
+<h3>Ability Range (Empirical)</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2028</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>result_empirical <span class="ot">&lt;-</span> <span class="fu">bglmm</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="co"># ... other arguments ...</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="at">x_method =</span> <span class="st">&quot;Empirical&quot;</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="at">x_def =</span> <span class="fu">c</span>(<span class="dv">40</span>,<span class="dv">60</span>) <span class="co"># Ability range 40-60</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="ability-range-analytical" class="section level3">
+<h3>Ability Range (Analytical)</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2029</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>result_analytical <span class="ot">&lt;-</span> <span class="fu">bglmm</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="co"># ... other arguments ...</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">x_method =</span> <span class="st">&quot;Analytical&quot;</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    <span class="at">x_def =</span> <span class="fu">c</span>(<span class="dv">40</span>,<span class="dv">60</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a> )</span></code></pre></div>
+</div>
+</div>
+<div id="decision-rules-with-multilevel-data" class="section level2">
+<h2>Decision Rules with Multilevel Data</h2>
+<div id="all-rule-conjunctive" class="section level3">
+<h3>All Rule (Conjunctive)</h3>
+<p>Both outcomes must favor the new method:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>result_all <span class="ot">&lt;-</span> <span class="fu">bglmm</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="at">data =</span> study_data,</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="co"># ... other arguments ...</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="at">rule =</span> <span class="st">&quot;All&quot;</span>  <span class="co"># P(new_method better on BOTH outcomes)</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="any-rule-disjunctive" class="section level3">
+<h3>Any Rule (Disjunctive)</h3>
+<p>At least one outcome must favor the new method:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>result_any <span class="ot">&lt;-</span> <span class="fu">bglmm</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="at">data =</span> study_data,</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="co"># ... other arguments ...</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="at">rule =</span> <span class="st">&quot;Any&quot;</span>  <span class="co"># P(new_method better on AT LEAST ONE outcome)</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="compensatory-rule" class="section level3">
+<h3>Compensatory Rule</h3>
+<p>Weighted combination (e.g., math weighted 60%, reading 40%):</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>result_comp <span class="ot">&lt;-</span> <span class="fu">bglmm</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="at">data =</span> study_data,</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="co"># ... other arguments ...</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="at">rule =</span> <span class="st">&quot;Comp&quot;</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="at">w =</span> <span class="fu">c</span>(<span class="fl">0.6</span>, <span class="fl">0.4</span>)  <span class="co"># Weights for math and reading</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+</div>
+<div id="specifying-prior-distributions" class="section level2">
+<h2>Specifying Prior Distributions</h2>
+<p><code>bglmm()</code> uses <strong>weakly informative priors</strong>
+by default. You can customize these priors for:</p>
+<ul>
+<li>Fixed effects regression coefficients (<code>b_mu0</code>,
+<code>b_sigma0</code>)</li>
+<li>Random effects means (<code>g_mu0</code>,
+<code>g_sigma0</code>)</li>
+<li>Random effects covariance (<code>nu0</code>, <code>tau0</code>)</li>
+</ul>
+<div id="fixed-effects-priors-bglm-and-bglmm" class="section level3">
+<h3>Fixed Effects Priors (bglm and bglmm)</h3>
+<p>Fixed effects have a <strong>multivariate normal prior</strong>:</p>
+<p><span class="math display">\[\beta \sim N(\mu_0,
+\Sigma_0)\]</span></p>
+<div id="default-priors" class="section level4">
+<h4>Default Priors</h4>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># Default</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>p_fixed <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>b_mu0 <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, p_fixed)                 <span class="co"># Zero prior mean</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>b_sigma0 <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">diag</span>(<span class="fl">1e1</span>, p_fixed))    <span class="co"># Small prior precision (large prior variance on the log-odds scale). </span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>                                         <span class="co"># Weakly informative. </span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>                                         <span class="co"># solve() generates precision matrix needed as input</span></span></code></pre></div>
+<p>Where <code>p_fixed</code> is the number of fixed effects. In our
+example, we use: - Covariate effect(s) - Interaction term(s)</p>
+</div>
+<div id="custom-fixed-effects-priors" class="section level4">
+<h4>Custom Fixed Effects Priors</h4>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># Assume treatment improves outcomes (positive coefficient on group)</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>custom_b_mu0 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>)                 <span class="co"># Expect positive group effect </span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>custom_b_sigma0 <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">diag</span>(<span class="fu">c</span>(<span class="fl">1e1</span>, <span class="dv">5</span>))) <span class="co"># More certainty on group effect</span></span></code></pre></div>
+</div>
+</div>
+<div id="random-effects-priors" class="section level3">
+<h3>Random Effects Priors</h3>
+<div id="population-level-random-effects" class="section level4">
+<h4>Population-Level Random Effects</h4>
+<p>Random effects means have a <strong>multivariate normal
+prior</strong>:</p>
+<p><span class="math display">\[\gamma \sim N(\mu_g,
+\Sigma_g)\]</span></p>
+<p><strong>Default</strong>:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>p_random <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>g_mu0 <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, p_random)               <span class="co"># Prior mean</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>g_sigma0 <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">diag</span>(<span class="fl">1e1</span>, p_random))  <span class="co"># Weakly informative prior variance; </span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>                                        <span class="co"># solve() transforms variance matrix to precision matrix needed as input</span></span></code></pre></div>
+<p>Where <code>p_random</code> is the number of fixed effects. In our
+example, we use: - Intercept - Group effect</p>
+</div>
+<div id="random-effects-covariance" class="section level4">
+<h4>Random Effects Covariance</h4>
+<p>The covariance matrix has an <strong>inverse-Wishart
+prior</strong>:</p>
+<p><span class="math display">\[\Sigma \sim \text{InvWishart}(\nu_0,
+\mathbf{T}_0)\]</span></p>
+<p><strong>Default</strong>:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>nu0 <span class="ot">&lt;-</span> p_random                <span class="co"># Degrees of freedom (dimension)</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>tau0 <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="fl">1e-1</span>, p_random)   <span class="co"># Scale matrix</span></span></code></pre></div>
+<p><strong>Important</strong>: - <code>nu0</code> must be ≥
+<code>p_random</code> - <code>tau0</code> must be <strong>positive
+definite</strong> (never use <code>diag(0, p_random)</code>) - Smaller
+<code>nu0</code> = less informative - Larger <code>tau0</code> diagonal
+values = expect more between-cluster variation</p>
+</div>
+</div>
+<div id="prior-sensitivity-analysis" class="section level3">
+<h3>Prior Sensitivity Analysis</h3>
+<p>Compare results under different priors:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># -----------------------------------------------------------------</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="co"># Three priors that pull in clearly different directions.</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="co"># -----------------------------------------------------------------</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="co"># 1. Weakly informative (neutral starting point)</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="co">#    Diffuse on fixed effects, diffuse IW for random effects.</span></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>result_weak <span class="ot">&lt;-</span> <span class="fu">bglmm</span>(</span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>  <span class="co"># ... other arguments ...</span></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a>  <span class="at">b_mu0    =</span> <span class="fu">rep</span>(<span class="dv">0</span>, p_fixed),</span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a>  <span class="at">b_sigma0 =</span> <span class="fu">solve</span>(<span class="fu">diag</span>(<span class="dv">10</span>, p_fixed)),</span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>  <span class="at">g_mu0    =</span> <span class="fu">rep</span>(<span class="dv">0</span>, p_random),</span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a>  <span class="at">g_sigma0 =</span> <span class="fu">solve</span>(<span class="fu">diag</span>(<span class="dv">10</span>, p_random)),</span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a>  <span class="at">nu0  =</span> p_random,</span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a>  <span class="at">tau0 =</span> <span class="fu">diag</span>(<span class="fl">0.1</span>, p_random),</span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a>)</span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a></span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="co"># 2. Skeptical prior</span></span>
+<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a><span class="co">#    Tight variance so the prior resists positive or negative evidence. </span></span>
+<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a><span class="co">#    Also a small tau0, implying homogeneity between schools.</span></span>
+<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a>result_skeptical <span class="ot">&lt;-</span> <span class="fu">bglmm</span>(</span>
+<span id="cb15-21"><a href="#cb15-21" tabindex="-1"></a>  <span class="co"># ... other arguments ...</span></span>
+<span id="cb15-22"><a href="#cb15-22" tabindex="-1"></a>  <span class="at">b_mu0    =</span> <span class="fu">rep</span>(<span class="dv">0</span>, p_fixed),               </span>
+<span id="cb15-23"><a href="#cb15-23" tabindex="-1"></a>  <span class="at">b_sigma0 =</span> <span class="fu">solve</span>(<span class="fu">diag</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>), p_fixed)),  <span class="co"># Tight — hard(er) to overcome</span></span>
+<span id="cb15-24"><a href="#cb15-24" tabindex="-1"></a>  <span class="at">g_mu0    =</span> <span class="fu">rep</span>(<span class="dv">0</span>, p_random),</span>
+<span id="cb15-25"><a href="#cb15-25" tabindex="-1"></a>  <span class="at">g_sigma0 =</span> <span class="fu">solve</span>(<span class="fu">diag</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>), p_random)), <span class="co"># Tight — hard(er) to overcome</span></span>
+<span id="cb15-26"><a href="#cb15-26" tabindex="-1"></a>  <span class="at">nu0  =</span> p_random <span class="sc">+</span> <span class="dv">4</span>,                 <span class="co"># More informative IW</span></span>
+<span id="cb15-27"><a href="#cb15-27" tabindex="-1"></a>  <span class="at">tau0 =</span> <span class="fu">diag</span>(<span class="fl">0.05</span>, p_random),         <span class="co"># Expects small school variation</span></span>
+<span id="cb15-28"><a href="#cb15-28" tabindex="-1"></a>)</span></code></pre></div>
+<p><strong>Interpretation</strong>:</p>
+<ul>
+<li>If results are <strong>similar</strong> → data dominate, prior has
+little influence</li>
+<li>If results <strong>differ substantially</strong> → prior is
+influential</li>
+</ul>
+</div>
+<div id="guidelines-for-choosing-priors" class="section level3">
+<h3>Guidelines for Choosing Priors</h3>
+<ol style="list-style-type: decimal">
+<li><p><strong>Default priors</strong>: Use for exploratory analysis or
+when no prior information exists</p></li>
+<li><p><strong>Informative priors</strong>: Use when:</p>
+<ul>
+<li>You have strong theoretical expectations</li>
+<li>Previous studies provide evidence</li>
+<li>You want to regularize extreme estimates</li>
+<li>Sample size is very small</li>
+</ul></li>
+<li><p><strong>Skeptical priors</strong>: Use for:</p>
+<ul>
+<li>Conservative hypothesis testing</li>
+<li>Replication studies (favor null)</li>
+<li>High-stakes decisions requiring strong evidence</li>
+</ul></li>
+<li><p><strong>Prior sensitivity</strong>: Check:</p></li>
+</ol>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>   <span class="co"># Run with default priors</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>   <span class="co"># Run with informative priors</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>   <span class="co"># Compare posterior probabilities and effect sizes</span></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>   <span class="co"># If similar → robust; if different → prior-dependent</span></span></code></pre></div>
+</div>
+<div id="common-mistakes-to-avoid" class="section level3">
+<h3>Common Mistakes to Avoid</h3>
+<ul>
+<li><p><strong>Don’t</strong>: Use <code>tau0 = diag(0, p)</code>
+(singular matrix)</p></li>
+<li><p><strong>Do</strong>: Use <code>tau0 = diag(1e-1, p)</code> or
+<code>diag(0.5, p)</code></p></li>
+<li><p><strong>Don’t</strong>: Set <code>nu0 &lt; p</code> (too few
+degrees of freedom)</p></li>
+<li><p><strong>Do</strong>: Use `nu0 =<span class="math inline">\(\geq
+p\)</span></p></li>
+<li><p><strong>Don’t</strong>: Use extremely small prior variances
+without justification</p></li>
+<li><p><strong>Do</strong>: Use weakly informative priors unless you
+have strong evidence</p></li>
+<li><p><strong>Don’t</strong>: Ignore prior sensitivity when sample size
+is small</p></li>
+<li><p><strong>Do</strong>: Report results under multiple priors for
+transparency</p></li>
+</ul>
+</div>
+<div id="further-reading" class="section level3">
+<h3>Further Reading</h3>
+<p>For Bayesian logistic regression priors: - Gelman, A. Jakulin, A.,
+Pittau, M. G. &amp; Su, Y-S (2008). A weakly informative default prior
+distribution for logistic and other regression models. <em>Annals of
+Applied Statistics, 2</em>(4), 1360-1383. .</p>
+<p>For inverse-Wishart priors: - Gelman, A. (2006). Prior distributions
+for variance parameters in hierarchical models. <em>Bayesian Analysis,
+1</em>(3), 515-534. </p>
+</div>
+</div>
+<div id="mcmc-diagnostics" class="section level2">
+<h2>MCMC Diagnostics</h2>
+<p>The function internally checks the multivariate potential scale
+reduction factor (MPSRF) and warns if &gt; 1.1. Additional MCMC
+diagnostics will be returned When
+<code>return_diagnostics = TRUE</code>. When
+<code>return_diagnostic_plots = TRUE</code>, <code>bglmm()</code>
+returns diagnostic plots as well.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2030</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>result_diag <span class="ot">&lt;-</span> <span class="fu">bglmm</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>  <span class="at">data =</span> study_data,</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>  <span class="at">grp =</span> <span class="st">&quot;method&quot;</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>  <span class="at">grp_a =</span> <span class="st">&quot;traditional&quot;</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>  <span class="at">grp_b =</span> <span class="st">&quot;new_method&quot;</span>,</span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>  <span class="at">id_var =</span> <span class="st">&quot;school_id&quot;</span>,</span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>  <span class="at">x_var =</span> <span class="st">&quot;baseline_ability&quot;</span>,</span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>  <span class="at">y_vars =</span> <span class="fu">c</span>(<span class="st">&quot;math_pass&quot;</span>, <span class="st">&quot;reading_pass&quot;</span>),</span>
+<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a>  <span class="at">x_method =</span> <span class="st">&quot;Value&quot;</span>,</span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a>  <span class="at">x_def =</span> <span class="dv">50</span>,</span>
+<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a>  <span class="at">n_burn =</span> <span class="dv">200</span>,</span>
+<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a>  <span class="at">n_it =</span> <span class="dv">500</span>,</span>
+<span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a>  <span class="at">n_thin =</span> <span class="dv">1</span>,</span>
+<span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a>  <span class="at">start =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">1</span>),</span>
+<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a>  <span class="at">return_diagnostics =</span> <span class="cn">TRUE</span></span>
+<span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a>)</span></code></pre></div>
+<p>Key diagnostics:</p>
+<ul>
+<li><strong>MPSRF</strong> (Multivariate PSRF): Ideally &lt; 1.1</li>
+<li><strong>Effective sample size</strong>: Should be &gt; 100 per
+parameter</li>
+<li><strong>Rhat</strong>: Ideally &lt; 1.1 for all parameters</li>
+</ul>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co"># Check convergence</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Random effects convergence:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="co">#&gt; Random effects convergence:</span></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="fu">print</span>(result_diag<span class="sc">$</span>diags<span class="sc">$</span>g<span class="sc">$</span>convergence)</span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a><span class="co">#&gt; $mpsrf</span></span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a><span class="co">#&gt; [1] 6.27427</span></span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="co">#&gt; $psrf</span></span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a><span class="co">#&gt;                  Point est. Upper C.I.</span></span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a><span class="co">#&gt; g11_Intercept[1]   1.368093   2.748530</span></span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a><span class="co">#&gt; g11_method[2]      1.146185   1.151254</span></span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a><span class="co">#&gt; g10_Intercept[1]   1.135531   1.218255</span></span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a><span class="co">#&gt; g10_method[2]      2.271145   7.825439</span></span>
+<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a><span class="co">#&gt; g01_Intercept[1]   1.683002   3.983673</span></span>
+<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a><span class="co">#&gt; g01_method[2]      3.646306   8.278269</span></span>
+<span id="cb18-16"><a href="#cb18-16" tabindex="-1"></a></span>
+<span id="cb18-17"><a href="#cb18-17" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">Random effects covariance convergence:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb18-18"><a href="#cb18-18" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-19"><a href="#cb18-19" tabindex="-1"></a><span class="co">#&gt; Random effects covariance convergence:</span></span>
+<span id="cb18-20"><a href="#cb18-20" tabindex="-1"></a><span class="fu">print</span>(result_diag<span class="sc">$</span>diags<span class="sc">$</span>tau<span class="sc">$</span>convergence)</span>
+<span id="cb18-21"><a href="#cb18-21" tabindex="-1"></a><span class="co">#&gt; $mpsrf</span></span>
+<span id="cb18-22"><a href="#cb18-22" tabindex="-1"></a><span class="co">#&gt; [1] 5.167838</span></span>
+<span id="cb18-23"><a href="#cb18-23" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-24"><a href="#cb18-24" tabindex="-1"></a><span class="co">#&gt; $psrf</span></span>
+<span id="cb18-25"><a href="#cb18-25" tabindex="-1"></a><span class="co">#&gt;                        Point est. Upper C.I.</span></span>
+<span id="cb18-26"><a href="#cb18-26" tabindex="-1"></a><span class="co">#&gt; g11_InterceptIntercept   4.983014  29.190062</span></span>
+<span id="cb18-27"><a href="#cb18-27" tabindex="-1"></a><span class="co">#&gt; g11_methodIntercept      5.274581  21.553906</span></span>
+<span id="cb18-28"><a href="#cb18-28" tabindex="-1"></a><span class="co">#&gt; g11_methodmethod         1.201419   1.731316</span></span>
+<span id="cb18-29"><a href="#cb18-29" tabindex="-1"></a><span class="co">#&gt; g10_InterceptIntercept   2.539835  13.514819</span></span>
+<span id="cb18-30"><a href="#cb18-30" tabindex="-1"></a><span class="co">#&gt; g10_methodIntercept      2.659497  14.379082</span></span>
+<span id="cb18-31"><a href="#cb18-31" tabindex="-1"></a><span class="co">#&gt; g10_methodmethod         2.672124  14.473397</span></span>
+<span id="cb18-32"><a href="#cb18-32" tabindex="-1"></a><span class="co">#&gt; g01_InterceptIntercept   4.175515  20.831837</span></span>
+<span id="cb18-33"><a href="#cb18-33" tabindex="-1"></a><span class="co">#&gt; g01_methodIntercept      4.298845  20.442173</span></span>
+<span id="cb18-34"><a href="#cb18-34" tabindex="-1"></a><span class="co">#&gt; g01_methodmethod         4.247503  19.116352</span></span></code></pre></div>
+<p>Available plots:</p>
+<ul>
+<li><strong>Autocorrelation</strong>: Is ideally high at lag 0, then
+drops off quickly toward 0 within a few lags.</li>
+<li><strong>Traceplot</strong>: Chains should fluctuate randomly around
+a stable mean, with no clear trends, drifts, or long flat stretches.
+Good mixing.</li>
+<li><strong>Density</strong>: Posterior density of individual parameters
+(regression coefficients and variance parameters) if preferably smooth,
+unimodal (unless theory suggests otherwise), and without irregular
+spikes.</li>
+</ul>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">plot</span>(result_diag)                                    <span class="co"># All</span></span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="fu">plot</span>(result_diag, <span class="at">type =</span> <span class="st">&quot;trace&quot;</span>)                    <span class="co"># Trace only</span></span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a><span class="fu">plot</span>(result_diag, <span class="at">type =</span> <span class="st">&quot;density&quot;</span>)                  <span class="co"># Density only</span></span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a><span class="fu">plot</span>(result_diag, <span class="at">which =</span> <span class="st">&quot;fixed&quot;</span>)                   <span class="co"># Fixed effects</span></span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a><span class="fu">plot</span>(result_diag, <span class="at">which =</span> <span class="st">&quot;random&quot;</span>)                  <span class="co"># Random effects</span></span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a><span class="fu">plot</span>(result_diag, <span class="at">which =</span> <span class="st">&quot;variance&quot;</span>)                <span class="co"># Variance components</span></span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a><span class="fu">plot</span>(result_diag, <span class="at">which =</span> <span class="st">&quot;all&quot;</span>)                     <span class="co"># All</span></span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a></span>
+<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a><span class="co"># Combine type + which</span></span>
+<span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a><span class="fu">plot</span>(result_diag, <span class="at">type =</span> <span class="st">&quot;trace&quot;</span>, <span class="at">which =</span> <span class="st">&quot;all&quot;</span>)          <span class="co"># Trace for all parameters</span></span>
+<span id="cb19-12"><a href="#cb19-12" tabindex="-1"></a><span class="fu">plot</span>(result_diag, <span class="at">type =</span> <span class="st">&quot;density&quot;</span>, <span class="at">which =</span> <span class="st">&quot;variance&quot;</span>)   <span class="co"># Variance densities</span></span></code></pre></div>
+<p>If convergence issues occur:</p>
+<ol style="list-style-type: decimal">
+<li>Increase <code>n_burn</code> (more warmup)</li>
+<li>Increase <code>n_it</code> (more samples)</li>
+<li>Check for very few clusters</li>
+<li>Check for very small cluster sizes</li>
+<li>Check range of covariate and consider standardizing</li>
+<li>Check for problems and warnings in data (perfect separation, low
+variation, etc.)</li>
+</ol>
+<p>If autocorrelation is high, usually the effective sample size is much
+lower than <code>n_it</code>:</p>
+<ol style="list-style-type: decimal">
+<li>Consider thinning</li>
+<li>Consider increasing <code>n_it</code></li>
+</ol>
+<p>For more information on MCMC diagnostics, consult</p>
+<ul>
+<li><p>Brooks, S. P. &amp; Gelman, A. (1998). General methods for
+monitoring convergence of iterative simulations. <em>Journal of
+Computational and Graphical Statistics, 7</em>(4), 434–455.</p></li>
+<li><p>Gelman, A. &amp; Rubin, D. B. (1992). Inference from iterative
+simulation using multiple sequences. <em>Statistical Science, 7</em>(4),
+457–472. </p></li>
+</ul>
+</div>
+<div id="extracting-posterior-samples" class="section level2">
+<h2>Extracting Posterior Samples</h2>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2031</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>result_samples <span class="ot">&lt;-</span> <span class="fu">bglmm</span>(</span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a><span class="co"># ... other arguments ...</span></span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a>  <span class="at">return_samples =</span> <span class="cn">TRUE</span></span>
+<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="co"># Treatment effect samples</span></span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a><span class="fu">str</span>(result_samples<span class="sc">$</span>samples<span class="sc">$</span>delta)</span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a><span class="co"># Compute custom summaries</span></span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Treatment effect quantiles:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">apply</span>(result_samples<span class="sc">$</span>samples<span class="sc">$</span>delta, <span class="dv">2</span>, quantile, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.5</span>, <span class="fl">0.975</span>)))</span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a><span class="co"># Probability that effect on math &gt; 0.1</span></span>
+<span id="cb21-9"><a href="#cb21-9" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">P(delta_math &gt; 0.1):&quot;</span>, <span class="fu">mean</span>(result_samples<span class="sc">$</span>samples<span class="sc">$</span>delta[, <span class="dv">1</span>] <span class="sc">&gt;</span> <span class="fl">0.1</span>), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</div>
+<div id="data-requirements" class="section level2">
+<h2>Data Requirements</h2>
+<p>For reliable multilevel modeling:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Number of clusters</strong>: Ideally there are sufficient
+clusters
+<ul>
+<li>More clusters → Better random effect estimates</li>
+</ul></li>
+<li><strong>Cluster sizes</strong>:
+<ul>
+<li>Very small clusters provide little information about random
+effects</li>
+<li>Unbalanced cluster sizes are acceptable</li>
+</ul></li>
+<li><strong>Group balance within clusters</strong>: Ideally, each
+cluster has both treatment groups
+<ul>
+<li>If some clusters have only one group, the model can still fit but
+with a warning</li>
+</ul></li>
+<li><strong>Missing data</strong>: Handled automatically
+<ul>
+<li>Rows with missing outcomes or covariates are removed per
+cluster</li>
+<li>Complete-case analysis within each cluster</li>
+</ul></li>
+</ol>
+</div>
+<div id="common-issues-and-solutions" class="section level2">
+<h2>Common Issues and Solutions</h2>
+<div id="warning-very-few-clusters-j-5" class="section level3">
+<h3>Warning: “Very few clusters (J &lt; 5)”</h3>
+<p><strong>Problem</strong>: Too few clusters might hinder reliable
+random effect estimation</p>
+<p><strong>Solutions</strong>: - Collect more clusters if possible - Use
+<code>bglm()</code> instead (ignores clustering), but only if
+appropriate</p>
+</div>
+<div id="warning-mcmc-chains-may-not-have-converged" class="section level3">
+<h3>Warning: “MCMC chains may not have converged”</h3>
+<p><strong>Problem</strong>: MPSRF &gt; 1.1</p>
+<p><strong>Solutions</strong>: 1. Increase burn-in:
+<code>n_burn = 2000</code> or higher 2. Increase iterations:
+<code>n_it = 5000</code> or higher 3. Reduce thinning:
+<code>n_thin = 1</code> (keeps more samples) 4. Check data quality
+(outliers, sufficient variation)</p>
+</div>
+<div id="slow-computation" class="section level3">
+<h3>Slow computation</h3>
+<p><strong>Problem</strong>: Large number of clusters or long chains</p>
+<p><strong>Solutions</strong>: - Start with small <code>n_it</code> to
+verify model runs - Increase <code>n_thin</code> to reduce stored
+samples: <code>n_thin = 10</code> - Run overnight for production
+analyses - Typical times: 5-10 minutes for 10 clusters, 10k
+iterations</p>
+</div>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p><code>bglmm()</code> extends Bayesian multivariate analysis to
+clustered data by:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Accounting for clustering</strong> via random effects</li>
+<li><strong>Allowing for subgroup effects</strong> via logistic
+regression</li>
+<li><strong>Flexible population definitions</strong> (Value, Empirical,
+Analytical)</li>
+<li><strong>Multivariate decision rules</strong> (All, Any,
+Compensatory)</li>
+</ol>
+<p>Choose your analysis:</p>
+<ul>
+<li><strong><code>bmvb()</code></strong>: Full sample, no
+clustering</li>
+<li><strong><code>bglm()</code></strong>: Subgroup analysis, no
+clustering</li>
+<li><strong><code>bglmm()</code></strong>: Subgroup analysis +
+clustering</li>
+</ul>
+<p>All three functions support multivariate binary outcomes and provide
+posterior probabilities for treatment effects.</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>For more details on statistical methodology or when using the
+<code>bglmm()</code>-function, please cite:</p>
+<p>Kavelaars, X., J. Mulder, and M. Kaptein (2023). “Bayesian
+multilevel, multivariate logistic regression for superiority
+decision-making under, observable treatment heterogeneity”. In: <em>BMC
+Medical Research, Methodology</em> 23.1. DOI:, <a href="https://doi.org/10.1186%2Fs12874-023-02034-z">10.1186/s12874-023-02034-z</a>.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

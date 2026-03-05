@@ -1,7 +1,6 @@
 ---
 title: "Subgroup Analysis with Multivariate Binary Outcomes in Multilevel Data"
 output: rmarkdown::html_vignette
-bibliography: bmco.bib
 vignette: >
   %\VignetteIndexEntry{Subgroup Analysis with Multivariate Binary Outcomes in Multilevel Data}
   %\VignetteEngine{knitr::rmarkdown}
@@ -18,7 +17,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, echo=FALSE}
-biblio <- RefManageR::ReadBib("bmco.bib", check = "error")
+biblio <- RefManageR::ReadBib("../inst/REFERENCES.bib", check = "error")
 ```
 
 ## Introduction
@@ -123,6 +122,7 @@ result <- bglmm(
 
 ```{r show_results, eval=TRUE}
 print(result)
+summary(result)
 ```
 
 ### Interpretation
@@ -419,9 +419,6 @@ print(result_diag$diags$g$convergence)
 cat("\nRandom effects covariance convergence:\n")
 print(result_diag$diags$tau$convergence)
 
-# Check MCMC diagnostics
-cat("Fixed effects diagnostics:\n")
-print(result_diag$diags$b)
 ```
 
 Available plots: 
@@ -430,7 +427,7 @@ Available plots:
 - **Traceplot**: Chains should fluctuate randomly around a stable mean, with no clear trends, drifts, or long flat stretches. Good mixing.
 - **Density**: Posterior density of individual parameters (regression coefficients and variance parameters) if preferably smooth, unimodal (unless theory suggests otherwise), and without irregular spikes.
 
-```{r plot_convergence, eval=TRUE}
+```{r plot_convergence, eval = FALSE}
 plot(result_diag)                                    # All
 plot(result_diag, type = "trace")                    # Trace only
 plot(result_diag, type = "density")                  # Density only

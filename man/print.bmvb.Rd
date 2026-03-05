@@ -19,3 +19,21 @@ Invisibly returns the input object.
 \description{
 Print Method for bmvb Objects
 }
+\examples{
+set.seed(2024)
+trial_data <- data.frame(
+  treatment = rep(c("placebo", "drug"), each = 50),
+  y1 = rbinom(100, 1, rep(c(0.40, 0.60), each = 50)),
+  y2 = rbinom(100, 1, rep(c(0.50, 0.70), each = 50))
+)
+fit <- bmvb(
+  data = trial_data, grp = "treatment",
+  grp_a = "placebo", grp_b = "drug",
+  y_vars = c("y1", "y2"), n_it = 1000
+)
+print(fit)
+
+}
+\seealso{
+\code{\link{summary.bmvb}}
+}

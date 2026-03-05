@@ -95,14 +95,93 @@ If NULL and rule = "Comp", equal weights are used. Default is NULL.}
 
 \item{return_diagnostics}{Logical. Return MCMC diagnostics? Default is TRUE.}
 
-\item{return_diagnostic_plots}{Logical. Should diagnostic plots (traceplots, autocorrelation, density) be returned? Default is \code{FALSE}. If \code{TRUE}, diagnostics are returned by default.}
+\item{return_diagnostic_plots}{Logical. Should MCMC chains for diagnostic plots (traceplots, autocorrelation, density) be returned? Default is \code{FALSE}. If \code{TRUE}, diagnostics are returned by default.}
 
 \item{return_samples}{Logical. Return posterior samples? Default is FALSE.}
 }
 \value{
-A list of class "bglmm".
+An object of class \code{bglmm}, a list containing:
+\describe{
+\item{estimates}{A list with posterior means and standard deviations of
+group probabilities (\code{mean_a}, \code{mean_b}, \code{sd_a}, \code{sd_b}).
+If estimated, posterior means and standard deviations of fixed effects
+(\code{b}, \code{b_sd}) and random effects and variance components
+(\code{g}, \code{g_sd}, \code{tau}, \code{tau_sd}) are included.}
+\item{sample_sizes}{A list with group sample sizes (\code{n_a}, \code{n_b})
+and the number of clusters (\code{J}).}
+\item{delta}{A list with posterior mean differences (\code{mean_delta}),
+posterior standard errors (\code{se_delta}), posterior probability of the
+hypothesis (\code{pop}), and, if \code{rule = "Comp"}, the weighted
+difference (\code{w_delta}).}
+\item{info}{A list with prior specifications, model structure (fixed and
+random effects), test settings, group labels, covariate handling method,
+and subpopulation definition.}
+\item{diags}{If diagnostics are requested, a list with MCMC diagnostic
+results for fixed effects, random effects, and variance components.}
+\item{samples}{If \code{return_samples = TRUE}, a list containing posterior
+draws of group probabilities, differences, fixed effects, random effects,
+and variance components (if applicable).}
+}
 }
 \description{
 Perform a Bayesian test for differences between two (sub)groups on multiple binary outcomes
-using multilevel multinomial logistic regression.
+using multilevel multinomial logistic regression, as described in \insertCite{Kavelaars2023;textual}{bmco}.
+}
+\examples{
+\donttest{
+# Example with simulated data
+# Generate data
+set.seed(123)
+J <- 20 # No. clusters
+nJ <- 15 # Sample size per cluster
+
+# Generate random intercepts
+uj_1 <- rnorm(J)
+uj_2 <- rnorm(J)
+data <- data.frame(
+ id = factor(rep(1:J, each = nJ)),
+ group = rep(rep(c("A", "B"), each = J/2), each = nJ),
+ x = rnorm(J * nJ),
+ stringsAsFactors = FALSE
+)
+
+p1 <- p2 <- rep(NA, J * nJ)
+
+for (i in 1:(J * nJ)) {
+ j <- as.numeric(data$id[i])
+ grpB <- ifelse(data$group[i] == "B", 1, 0)
+
+ p1[i] <- plogis(-0.50 + 0.75 * grpB + 0.10 * data$x[i] + 0.20 * grpB * data$x[i] + uj_1[j])
+ p2[i] <- plogis(-0.50 + 0.80 * grpB + 0.05 * data$x[i] + 0.15 * grpB * data$x[i] + uj_2[j])
+
+ data$y1[i] <- rbinom(1, 1, p1[i])
+ data$y2[i] <- rbinom(1, 1, p2[i])
+}
+
+# Analyze
+result <- bglmm(
+ data = data,
+ grp = "group",
+ grp_a = "A",
+ grp_b = "B",
+ id_var = "id",
+ x_var = "x",
+ y_vars = c("y1", "y2"),
+ x_method = "Empirical",
+ x_def = c(-Inf, Inf),
+ fixed = c("group", "x", "group_x"),
+ random = c("Intercept"), # Random intercept model
+ test = "right_sided",
+ rule = "All",
+ n_burn = 100, # Too low for proper MCMC sampling
+ n_it = 500 # Too low for proper MCMC sampling
+ )
+
+print(result) # Warnings due to low number of MCMC iterations (n_burn and n_it)
+}
+}
+\references{
+{
+\insertRef{Kavelaars2023}{bmco}
+}
 }

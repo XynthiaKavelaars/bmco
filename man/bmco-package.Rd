@@ -12,13 +12,38 @@ including basic tests, regression adjustment, and multilevel models.
 \section{Main functions}{
 
 \itemize{
-\item \code{\link{bmvb}}: Basic Bayesian test using multivariate Bernoulli
-\item \code{\link{bglm}}: Test with covariate adjustment
-\item \code{\link{bglmm}}: Multilevel/clustered data analysis
+\item \code{\link{bmvb}}: Bayesian test using multivariate Bernoulli
+\item \code{\link{bglm}}: Subgroup analysis using Bayesian logistic regression analysis
+\item \code{\link{bglmm}}: Multilevel data using Bayesian multilevel logistic regression analysis
 }
 }
 
+\references{
+{
+\insertRef{Kavelaars2020}{bmco}
+
+\insertRef{Kavelaars2024}{bmco}
+
+\insertRef{Kavelaars2023}{bmco}
+}
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/XynthiaKavelaars/bmco}
+  \item \url{https://xynthia-kavelaars.shinyapps.io/bmco-pwr/}
+  \item Report bugs at \url{https://github.com/XynthiaKavelaars/bmco/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Xynthia Kavelaars \email{xynthia.kavelaars@ou.nl} (\href{https://orcid.org/0000-0003-1600-3153}{ORCID})
+
+Other contributors:
+\itemize{
+  \item Joris Mulder (\href{https://orcid.org/0000-0001-7007-3086}{ORCID}) [thesis advisor]
+  \item Maurits Kaptein (\href{https://orcid.org/0000-0002-6316-7524}{ORCID}) [thesis advisor]
+  \item Dutch Research Council (Grant no. 406.18.505) [funder]
+}
 
 }

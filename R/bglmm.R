@@ -450,98 +450,58 @@ transform2theta_lr_ml <- function(est_pars, X, measurement_levels, population_va
 #' @param ... Additional arguments (not used).
 #'
 #' @return Invisibly returns the input object.
+#'
+#' @examples
+#' # Uses the pre-computed example object shipped with the package:
+#' print(bglmm_fit)
+#'
+#' @seealso \code{\link{summary.bglmm}}
 #' @export
 print.bglmm <- function(x, digits = 3, ...) {
 
   cat("\nBayesian Multilevel Multivariate Logistic Regression\n")
   cat("======================================================\n\n")
 
-  cat("Group Estimates:\n")
-  est_tab <- rbind.data.frame(
-    c(x$info$grp_a, x$estimates$mean_a, x$estimates$sd_a),
-    c(x$info$grp_b, x$estimates$mean_b, x$estimates$sd_b)
+  est_tab <- data.frame(
+    Group   = c(x$info$grp_a, x$info$grp_b),
+    "mean y1" = c(x$estimates$mean_a[1], x$estimates$mean_b[1]),
+    "mean y2" = c(x$estimates$mean_a[2], x$estimates$mean_b[2]),
+    check.names = FALSE
   )
-  colnames(est_tab) <- c("Group", "mean y1", "mean y2", "sd y1", "sd y2")
-  rownames(est_tab) <- NULL
-  print(est_tab, row.names = FALSE)
-  cat("\n")
+  print(est_tab, row.names = FALSE, digits = digits)
+  cat(sprintf("  J = %d clusters    n(%s) = %d    n(%s) = %d\n\n",
+              x$sample_sizes$J,
+              x$info$grp_a, x$sample_sizes$n_a,
+              x$info$grp_b, x$sample_sizes$n_b))
 
-  cat("Sample Sizes:\n")
-  cat(sprintf("  Number of clusters: %d\n", x$sample_sizes$J))
-  cat(sprintf("  %s: n = %d\n", x$info$grp_a, x$sample_sizes$n_a))
-  cat(sprintf("  %s: n = %d\n\n", x$info$grp_b, x$sample_sizes$n_b))
-
-  cat("Treatment Effect:\n")
-  cat(sprintf("  Delta mean: %s\n", paste(x$delta$mean_delta, collapse = ", ")))
-  cat(sprintf("  Delta SE:   %s\n", paste(x$delta$se_delta, collapse = ", ")))
-
-  if (x$info$rule == "Comp") {
-    cat(sprintf("  Weighted delta mean: %.3f\n", x$delta$w_delta))
+  if (x$info$rule == "Comp" && !is.null(x$delta$w_delta)) {
+    cat(sprintf("Posterior probability %s [%s, w = %s]: %.3f\n",
+                x$info$test_label, x$info$rule,
+                paste(round(x$info$w, digits), collapse = ", "),
+                x$delta$pop))
+  } else {
+    cat(sprintf("Posterior probability %s [%s rule]: %.3f\n",
+                x$info$test_label, x$info$rule, x$delta$pop))
   }
 
-  cat(sprintf("  Posterior probability: %.3f\n\n", x$delta$pop))
-
-  cat("Test Information:\n")
-  cat(sprintf(" Prior fixed predictors: normal distribution with :\n"))
-
-  cat(sprintf(" Mean: \n"))
-  df_b_mu0 <- setNames(as.data.frame(t(x$info$b_mu0)), x$info$fixed)
-  rownames(df_b_mu0) <- NULL
-  print(df_b_mu0)
-  cat("\n")
-
-  cat(sprintf(" Variance: \n"))
-  df_b_sigma0 <- setNames(as.data.frame(cbind(x$info$fixed, solve(x$info$b_sigma0))), c("",x$info$fixed))
-  rownames(df_b_sigma0) <- NULL
-  print(df_b_sigma0)
-  cat("\n")
-
-   cat(sprintf(" Prior random predictors: normal distribution with :\n"))
-   cat(sprintf(" Mean: \n"))
-   df_g_mu0 <- setNames(as.data.frame(t(x$info$g_mu0)), x$info$random)
-   rownames(df_b_mu0) <- NULL
-   print(df_g_mu0)
-   cat("\n")
-
-   cat(sprintf(" Variance: \n"))
-   df_g_sigma0 <- setNames(as.data.frame(cbind(x$info$random, solve(x$info$g_sigma0))), c("",x$info$random))
-   rownames(df_g_sigma0) <- NULL
-   print(df_g_sigma0)
-   cat("\n")
-
-  cat(sprintf(" Prior covariance matrix: inverse-Wishart distribution with :\n"))
-  cat(sprintf(" Df: %s\n", x$info$nu0))
-
-  cat(sprintf(" Scale matrix: \n"))
-  df_tau0 <- setNames(as.data.frame(cbind(x$info$random, solve(x$info$tau0))), c("",x$info$random))
-  rownames(df_tau0) <- NULL
-  print(df_tau0)
-  cat("\n")
-
-  cat(sprintf("  Decision rule: %s\n", x$info$rule))
-  if (x$info$rule == "Comp") {
-    cat(sprintf("  Weights: %s\n", paste(x$info$w, collapse = ", ")))
-  }
-  cat(sprintf("  Hypothesis: %s\n", x$info$test_label))
-  cat(sprintf("  Marginalization method: %s\n", x$info$marg_method))
-  cat(sprintf("  Reference group: %s\n", x$info$ref_grp))
-  cat(sprintf("  (Sub)population: [%s]\n",
+  cat(sprintf("Marginalization: %s over [%s]\n",
+              x$info$marg_method,
               paste(x$info$sub_pop, collapse = ", ")))
 
-  # Display diagnostics if available
+  # MCMC convergence at a glance
   if (!is.null(x$diags)) {
-    cat("\nMCMC Diagnostics:\n")
-    if (!is.null(x$diags$g)) {
-      cat(sprintf("  Random effects MPSRF: %.4f\n", x$diags$g$convergence$mpsrf))
-    }
-    if (!is.null(x$diags$tau)) {
-      cat(sprintf("  Variance components MPSRF: %.4f\n", x$diags$tau$convergence$mpsrf))
-    }
-    if (!is.null(x$diags$b)) {
-      cat(sprintf("  Fixed effects MPSRF: %.4f\n", x$diags$b$convergence$mpsrf))
-    }
+    mpsrf_vals <- vapply(
+      x$diags[c("b", "g", "tau")],
+      function(d) if (!is.null(d)) round(d$convergence$mpsrf, 4) else NA_real_,
+      numeric(1)
+    )
+    mpsrf_vals <- mpsrf_vals[!is.na(mpsrf_vals)]
+    nms <- c(b = "fixed", g = "random", tau = "variance")[names(mpsrf_vals)]
+    cat(sprintf("MPSRF: %s\n",
+                paste(sprintf("%s = %.4f", nms, mpsrf_vals), collapse = "    ")))
   }
-  cat("\n")
+
+  cat("\nUse summary() for full coefficient tables, priors and MCMC diagnostics.\n\n")
 
   invisible(x)
 }

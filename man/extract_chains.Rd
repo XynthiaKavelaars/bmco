@@ -18,3 +18,4 @@ An mcmc.list object containing the MCMC chains.
 \description{
 Extract MCMC chains from a fitted bglm or bglmm model for custom plotting or analysis.
 }
+\keyword{internal}

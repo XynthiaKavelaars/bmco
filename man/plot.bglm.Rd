@@ -21,3 +21,9 @@ Invisibly returns NULL (plots are displayed).
 \description{
 Plot Method for bglm Objects
 }
+\examples{
+# Uses the pre-computed example object shipped with the package.
+# Plot trace plots for the fixed-effect regression coefficients:
+plot(bglm_fit, type = "trace")
+
+}

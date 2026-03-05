@@ -317,7 +317,7 @@ test_that("error when x_def range is inverted", {
   )
 })
 
-test_that("warning when x_def excludes most data", {
+test_that("error when x_def is below minimum", {
   test_data <- data.frame(
     grp = rep(c("A", "B"), each = 30),
     age = rnorm(60, 50, 10),

@@ -3,7 +3,7 @@
 #' Bayesian Multivariate Bernoulli Test
 #'
 #' Perform a Bayesian test for differences between two groups on multiple binary outcomes
-#' using a Multivariate Bernoulli distribution.
+#' using a Multivariate Bernoulli distribution, as described in \insertCite{Kavelaars2020;textual}{bmco}.
 #'
 #' @param data Data frame containing the data.
 #' @param grp Character string. Name of the grouping variable.
@@ -22,30 +22,51 @@
 #' @param n_it Integer. Number of MCMC iterations. Default is 10000.
 #' @param return_samples Logical. Should posterior samples be returned? Default is FALSE.
 #'
-#' @return A list of class "bmvb" containing:
+#' @return An object of class \code{bmvb}, a list containing:
 #' \describe{
-#'   \item{estimates}{Posterior means and standard deviations for each group}
-#'   \item{sample_sizes}{Sample sizes for each group}
-#'   \item{delta}{Treatment effect estimates and posterior probability}
-#'   \item{info}{Test specifications}
-#'   \item{samples}{Posterior samples (if return_samples = TRUE)}
+#'   \item{estimates}{A list with posterior means (\code{mean_a}, \code{mean_b})
+#'   and standard deviations (\code{sd_a}, \code{sd_b}) of the category probabilities
+#'   for both groups.}
+#'   \item{sample_sizes}{A list with group sample sizes (\code{n_a}, \code{n_b}).}
+#'   \item{delta}{A list with posterior mean differences (\code{mean_delta}),
+#'   posterior standard errors (\code{se_delta}), posterior probability of the
+#'   hypothesis (\code{pop}), and, if \code{rule = "Comp"}, the weighted
+#'   difference (\code{w_delta}).}
+#'   \item{info}{A list with test specifications, including the decision rule,
+#'   test direction, group labels, and weights (if applicable).}
+#'   \item{samples}{If \code{return_samples = TRUE}, a list containing posterior
+#'   draws of \code{theta_a}, \code{theta_b}, and \code{delta}.}
+#' }
+#'
+#' @references{
+#' \insertRef{Kavelaars2020}{bmco}
 #' }
 #'
 #' @export
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Example with simulated data
-#' result <- bmvb(
-#'   data = my_data,
-#'   grp = "treatment",
-#'   grp_a = "control",
-#'   grp_b = "experimental",
-#'   y_vars = c("outcome1", "outcome2"),
-#'   test = "right_sided",
-#'   rule = "All"
+#' # Generate data
+#' set.seed(123)
+#' data <- data.frame(
+#' treatment = rep(c("control", "drug"), each = 50),
+#'  outcome1 = rbinom(100, 1, 0.5),
+#'  outcome2 = rbinom(100, 1, 0.5)
 #' )
-#' print(result)
-#' }
+#'
+#' # Analyze
+#' result <- bmvb(
+#'  data = data,
+#'  grp = "treatment",
+#'  grp_a = "control",
+#'  grp_b = "drug",
+#'  y_vars = c("outcome1", "outcome2"),
+#'  n_it = 10000
+#' )
+#'
+#'print(result)
+#'}
 bmvb <- function(data, grp, grp_a, grp_b, y_vars,
                  test = c("right_sided", "left_sided"),
                  rule = c("All", "Any", "Comp"),
@@ -152,7 +173,7 @@ bmvb <- function(data, grp, grp_a, grp_b, y_vars,
 #' Bayesian Generalized Linear Model
 #'
 #' Perform a Bayesian test for differences between two (sub)groups on multiple binary outcomes
-#' using multinomial logistic regression.
+#' using multinomial logistic regression as described in \insertCite{Kavelaars2024;textual}{bmco}.
 #'
 #' @param data Data frame containing the data.
 #' @param grp Character string. Name of the grouping variable (will be treated as factor).
@@ -179,19 +200,76 @@ bmvb <- function(data, grp, grp_a, grp_b, y_vars,
 #' @param n_chain Integer. Number of MCMC chains to be sampled. Default is 2.
 #' @param start Numeric vector. Starting values for chains. Should have length \code{n_chain}. Default is c(0.5, 1).
 #' @param return_diagnostics Logical. Return MCMC diagnostics? Default is TRUE.
-#' @param return_diagnostic_plots Logical. Should diagnostic plots (traceplots, autocorrelation, density) be returned? Default is \code{FALSE}. If \code{TRUE}, diagnostics are returned by default.
+#' @param return_diagnostic_plots Logical. Should MCMC chains for diagnostic plots (traceplots, autocorrelation, density) be returned? Default is \code{FALSE}. If \code{TRUE}, diagnostics are returned by default.
 #' @param return_samples Logical. Should posterior samples be returned? Default is FALSE.
 #'
-#' @return A list of class "bglm" containing:
+#' @return An object of class \code{bglm}, a list containing:
 #' \describe{
-#'   \item{estimates}{Posterior estimates for each group and regression parameters}
-#'   \item{sample_sizes}{Sample sizes for each group}
-#'   \item{delta}{Treatment effect estimates and posterior probability}
-#'   \item{info}{Test specifications}
-#'   \item{samples}{Posterior samples (if return_samples = TRUE)}
+#'   \item{estimates}{A list with posterior means and standard deviations of
+#'   group probabilities (\code{mean_a}, \code{mean_b}, \code{sd_a}, \code{sd_b}),
+#'   as well as posterior means (\code{b}) and standard deviations (\code{b_sd})
+#'   of the regression coefficients.}
+#'   \item{sample_sizes}{A list with group sample sizes (\code{n_a}, \code{n_b}).}
+#'   \item{delta}{A list with posterior mean differences (\code{mean_delta}),
+#'   posterior standard errors (\code{se_delta}), posterior probability of the
+#'   hypothesis (\code{pop}), and, if \code{rule = "Comp"}, the weighted
+#'   difference (\code{w_delta}).}
+#'   \item{info}{A list with prior specifications, test settings, group labels,
+#'   covariate handling method, and subpopulation definition.}
+#'   \item{diags}{If diagnostics are requested, a list with MCMC diagnostic
+#'   results for the regression coefficients.}
+#'   \item{samples}{If \code{return_samples = TRUE}, a list containing posterior
+#'   draws of \code{theta_a}, \code{theta_b}, \code{delta}, and regression
+#'   coefficients.}
 #' }
 #'
 #' @export
+#' @references{
+#' \insertRef{Kavelaars2024}{bmco}
+#' }
+#'
+#' @examples
+#' # Example with simulated data
+#' # Generate data
+#' set.seed(123)
+#' n <- 100
+#'
+#' data <- data.frame(
+#'  group = rep(c("A", "B"), each = n/2),
+#'  x = rnorm(n),
+#'  stringsAsFactors = FALSE
+#' )
+#'
+#' p1 <- p2 <- rep(NA, n)
+#'
+#' for (i in 1:n) {
+#'  grpB <- ifelse(data$group[i] == "B", 1, 0)
+#'
+#'  p1[i] <- plogis(-0.50 + 0.75 * grpB + 0.10 * data$x[i] + 0.20 * grpB * data$x[i])
+#'  p2[i] <- plogis(-0.50 + 0.80 * grpB + 0.05 * data$x[i] + 0.15 * grpB * data$x[i])
+#'
+#'  data$y1[i] <- rbinom(1, 1, p1[i])
+#'  data$y2[i] <- rbinom(1, 1, p2[i])
+#'}
+#'
+#' # Analyze
+#' result <- bglm(
+#'  data = data,
+#'  grp = "group",
+#'  grp_a = "A",
+#'  grp_b = "B",
+#'  x_var = "x",
+#'  y_vars = c("y1", "y2"),
+#'  x_method = "Empirical",
+#'  x_def = c(-Inf, Inf),
+#'  test = "right_sided",
+#'  rule = "All",
+#'  n_burn = 100, # Too low for proper MCMC sampling
+#'  n_it = 500 # Too low for proper MCMC sampling
+#')
+#'
+#' print(result)
+
 bglm <- function(data, grp, grp_a, grp_b, x_var, y_vars,
                  x_method = c("Empirical", "Analytical", "Value"),
                  x_def = c(-Inf, Inf),
@@ -267,11 +345,12 @@ bglm <- function(data, grp, grp_a, grp_b, x_var, y_vars,
       }), use.names = FALSE)
       return(y)
     }))
-    diags_b <- diagnose_mcmc(chains_b, plots = return_diagnostic_plots)
+    diags_b <- diagnose_mcmc(chains_b)
 
   diags <- list(
      diags_b = diags_b
   )
+
 
   # Check convergence
   if (any(sapply(diags, function(x) x$convergence$mpsrf > 1.1))) {
@@ -355,19 +434,21 @@ bglm <- function(data, grp, grp_a, grp_b, x_var, y_vars,
   }
 
   # Add diagnostics if requested
-  if (return_diagnostics | return_diagnostic_plots) {
+  if (return_diagnostics) {
     out$diags$b <- diags_b
   }
 
+  # Store MCMC chains (as mcmc.list) exactly once, only when needed for plots or samples
+  need_chains <- return_samples | return_diagnostic_plots
+  if (need_chains) {
+    out$samples$b <- chains_b
+  }
 
-  # Add posterior samples if requested
+  # Add remaining posterior samples if requested
   if (return_samples) {
-    out$samples <- list(
-      theta_a = theta_a,
-      theta_b = theta_b,
-      delta = delta,
-      b = pars
-    )
+    out$samples$theta_a <- theta_a
+    out$samples$theta_b <- theta_b
+    out$samples$delta    <- delta
   }
 
   class(out) <- "bglm"
@@ -377,7 +458,7 @@ bglm <- function(data, grp, grp_a, grp_b, x_var, y_vars,
 #' Bayesian Generalized Linear Mixed Model
 #'
 #' Perform a Bayesian test for differences between two (sub)groups on multiple binary outcomes
-#' using multilevel multinomial logistic regression.
+#' using multilevel multinomial logistic regression, as described in \insertCite{Kavelaars2023;textual}{bmco}.
 #'
 #' @param data Data frame containing the data.
 #' @param grp Character string. Name of the grouping variable.
@@ -410,11 +491,90 @@ bglm <- function(data, grp, grp_a, grp_b, x_var, y_vars,
 #' @param return_thinned Logical. Return thinned chains? Default is TRUE.
 #' @param n_thin Integer. Thinning interval. Default is 10.
 #' @param return_diagnostics Logical. Return MCMC diagnostics? Default is TRUE.
-#' @param return_diagnostic_plots Logical. Should diagnostic plots (traceplots, autocorrelation, density) be returned? Default is \code{FALSE}. If \code{TRUE}, diagnostics are returned by default.
+#' @param return_diagnostic_plots Logical. Should MCMC chains for diagnostic plots (traceplots, autocorrelation, density) be returned? Default is \code{FALSE}. If \code{TRUE}, diagnostics are returned by default.
 #' @param return_samples Logical. Return posterior samples? Default is FALSE.
 #'
-#' @return A list of class "bglmm".
+#' @return An object of class \code{bglmm}, a list containing:
+#' \describe{
+#'   \item{estimates}{A list with posterior means and standard deviations of
+#'   group probabilities (\code{mean_a}, \code{mean_b}, \code{sd_a}, \code{sd_b}).
+#'   If estimated, posterior means and standard deviations of fixed effects
+#'   (\code{b}, \code{b_sd}) and random effects and variance components
+#'   (\code{g}, \code{g_sd}, \code{tau}, \code{tau_sd}) are included.}
+#'   \item{sample_sizes}{A list with group sample sizes (\code{n_a}, \code{n_b})
+#'   and the number of clusters (\code{J}).}
+#'   \item{delta}{A list with posterior mean differences (\code{mean_delta}),
+#'   posterior standard errors (\code{se_delta}), posterior probability of the
+#'   hypothesis (\code{pop}), and, if \code{rule = "Comp"}, the weighted
+#'   difference (\code{w_delta}).}
+#'   \item{info}{A list with prior specifications, model structure (fixed and
+#'   random effects), test settings, group labels, covariate handling method,
+#'   and subpopulation definition.}
+#'   \item{diags}{If diagnostics are requested, a list with MCMC diagnostic
+#'   results for fixed effects, random effects, and variance components.}
+#'   \item{samples}{If \code{return_samples = TRUE}, a list containing posterior
+#'   draws of group probabilities, differences, fixed effects, random effects,
+#'   and variance components (if applicable).}
+#' }
 #' @export
+#'
+#' @references{
+#'  \insertRef{Kavelaars2023}{bmco}
+#'  }
+#' @examples
+#' \donttest{
+#' # Example with simulated data
+#' # Generate data
+#' set.seed(123)
+#' J <- 20 # No. clusters
+#' nJ <- 15 # Sample size per cluster
+#'
+#' # Generate random intercepts
+#' uj_1 <- rnorm(J)
+#' uj_2 <- rnorm(J)
+
+#' data <- data.frame(
+#'  id = factor(rep(1:J, each = nJ)),
+#'  group = rep(rep(c("A", "B"), each = J/2), each = nJ),
+#'  x = rnorm(J * nJ),
+#'  stringsAsFactors = FALSE
+#' )
+#'
+#' p1 <- p2 <- rep(NA, J * nJ)
+#'
+#' for (i in 1:(J * nJ)) {
+#'  j <- as.numeric(data$id[i])
+#'  grpB <- ifelse(data$group[i] == "B", 1, 0)
+#'
+#'  p1[i] <- plogis(-0.50 + 0.75 * grpB + 0.10 * data$x[i] + 0.20 * grpB * data$x[i] + uj_1[j])
+#'  p2[i] <- plogis(-0.50 + 0.80 * grpB + 0.05 * data$x[i] + 0.15 * grpB * data$x[i] + uj_2[j])
+#'
+#'  data$y1[i] <- rbinom(1, 1, p1[i])
+#'  data$y2[i] <- rbinom(1, 1, p2[i])
+#'}
+#'
+#' # Analyze
+#' result <- bglmm(
+#'  data = data,
+#'  grp = "group",
+#'  grp_a = "A",
+#'  grp_b = "B",
+#'  id_var = "id",
+#'  x_var = "x",
+#'  y_vars = c("y1", "y2"),
+#'  x_method = "Empirical",
+#'  x_def = c(-Inf, Inf),
+#'  fixed = c("group", "x", "group_x"),
+#'  random = c("Intercept"), # Random intercept model
+#'  test = "right_sided",
+#'  rule = "All",
+#'  n_burn = 100, # Too low for proper MCMC sampling
+#'  n_it = 500 # Too low for proper MCMC sampling
+#'  )
+#'
+#' print(result) # Warnings due to low number of MCMC iterations (n_burn and n_it)
+#' }
+
 bglmm <- function(data, grp, grp_a = NULL, grp_b = NULL, id_var, x_var, y_vars,
                   x_method = c("Empirical", "Analytical", "Value"),
                   x_def = c(-Inf, Inf),
@@ -531,8 +691,8 @@ bglmm <- function(data, grp, grp_a = NULL, grp_b = NULL, id_var, x_var, y_vars,
     }))
 
 
-    diags_g <- diagnose_mcmc(chains_g, plots = return_diagnostic_plots)
-    diags_tau <- diagnose_mcmc(chains_tau, plots = return_diagnostic_plots)
+    diags_g <- diagnose_mcmc(chains_g)
+    diags_tau <- diagnose_mcmc(chains_tau)
 
     if (length(fixed) > 0) {
       chains_b <- coda::mcmc.list(lapply(1:n_chain, function(chain) {
@@ -547,7 +707,7 @@ bglmm <- function(data, grp, grp_a = NULL, grp_b = NULL, id_var, x_var, y_vars,
         }), use.names = FALSE)
         return(y)
       }))
-      diags_b <- diagnose_mcmc(chains_b, plots = return_diagnostic_plots)
+      diags_b <- diagnose_mcmc(chains_b)
     }
 
     diags <- list(
@@ -606,10 +766,7 @@ bglmm <- function(data, grp, grp_a = NULL, grp_b = NULL, id_var, x_var, y_vars,
         chain[["b_draw_pg"]][seq_len(n_it / n_thin)]}))
     b_draw_mean <- Reduce(`+`, draws_b) / length(draws_b)
     b_draw_sd <- sqrt(Reduce(`+`, lapply(draws_b, function(x) (x - b_draw_mean)^2)) / (length(draws_b) - 1))
-
-    if(!return_samples){
-      rm(draws_b)
-    }
+    rm(draws_b)
   }
 
   if (length(random) > 0) {
@@ -617,6 +774,7 @@ bglmm <- function(data, grp, grp_a = NULL, grp_b = NULL, id_var, x_var, y_vars,
     chain[["g_draw_pg"]][seq_len(n_it / n_thin)]}))
   g_draw_mean <- Reduce(`+`, draws_g) / length(draws_g)
   g_draw_sd <- sqrt(Reduce(`+`, lapply(draws_g, function(x) (x - g_draw_mean)^2)) / (length(draws_g) - 1))
+  rm(draws_g)
 
   draws_tau <- do.call(c, lapply(pars[["Pars"]], function(chain) {
     chain[["tau_draw_pg"]][seq_len(n_it / n_thin)]}))
@@ -629,10 +787,7 @@ bglmm <- function(data, grp, grp_a = NULL, grp_b = NULL, id_var, x_var, y_vars,
     mat <- lapply(draws_tau, `[[`, k)
    sqrt(Reduce(`+`, lapply(mat, function(x) (x - tau_draw_mean[[k]])^2)) / (length(mat) - 1))
   })
-
- if(!return_samples){
-  rm(draws_g, draws_tau)
- }
+  rm(draws_tau)
   }
 
   # Prepare output
@@ -700,22 +855,20 @@ bglmm <- function(data, grp, grp_a = NULL, grp_b = NULL, id_var, x_var, y_vars,
     }
   }
 
-  # Add posterior samples if requested
+  # Store MCMC chains of regression coefficients (as mcmc.list), only when needed for plots
+  need_chains <- return_samples | return_diagnostic_plots
+  if (need_chains) {
+    out$samples$b   <- if (length(fixed)  > 0) chains_b   else NULL
+    out$samples$g   <- if (length(random) > 0) chains_g   else NULL
+    out$samples$tau <- if (length(random) > 0) chains_tau else NULL
+    out$samples <- Filter(Negate(is.null), out$samples)
+  }
+
+  # Add remaining posterior samples if requested
   if (return_samples) {
-     samples <- list(
-      theta_a = theta_a,
-      theta_b = theta_b,
-      delta = delta,
-      draws_fixed =
-        if (length(fixed) > 0) {
-          draws_b
-          } else {
-            NULL
-            },
-      draws_random = draws_g,
-      draws_random_var = draws_tau
-    )
-    out$samples <- Filter(Negate(is.null), samples)
+    out$samples$theta_a <- theta_a
+    out$samples$theta_b <- theta_b
+    out$samples$delta   <- delta
   }
 
   class(out) <- "bglmm"

@@ -225,73 +225,44 @@ transform2theta <- function(beta_draw_pg, X, Y = NULL, grp_var, population_var, 
 #' @param ... Additional arguments (not used).
 #'
 #' @return Invisibly returns the input object.
+#'
+#' @examples
+#' # Uses the pre-computed example object shipped with the package:
+#' print(bglm_fit)
+#'
+#' @seealso \code{\link{summary.bglm}}
 #' @export
 print.bglm <- function(x, digits = 3, ...) {
 
   cat("\nBayesian Multivariate Logistic Regression\n")
-  cat("============================================\n\n")
+  cat("==========================================\n\n")
 
-  cat("Group Estimates:\n")
   est_tab <- data.frame(
     Group   = c(x$info$grp_a, x$info$grp_b),
     "mean y1" = c(x$estimates$mean_a[1], x$estimates$mean_b[1]),
     "mean y2" = c(x$estimates$mean_a[2], x$estimates$mean_b[2]),
-    "sd y1"   = c(x$estimates$sd_a[1], x$estimates$sd_b[1]),
-    "sd y2"   = c(x$estimates$sd_a[2], x$estimates$sd_b[2]),
-    check.names = FALSE # Allows spaces in column names
+    check.names = FALSE
   )
-  print(est_tab, row.names = FALSE)
-  cat("\n")
+  print(est_tab, row.names = FALSE, digits = digits)
+  cat(sprintf("  n(%s) = %d    n(%s) = %d\n\n",
+              x$info$grp_a, x$sample_sizes$n_a,
+              x$info$grp_b, x$sample_sizes$n_b))
 
-  cat("Multinomial Regression Parameters:\n")
-  par_names <- c("b11", "b10", "b01", "b00")
-  var_names <- c("Intercept", x$info$grp_var, x$info$x_var, paste0(x$info$grp_var, "_", x$info$x_var))
-  rc_tab <- rbind.data.frame(
-    matrix(rbind(x$estimates$b, x$estimates$b_sd), nrow = nrow(x$estimates$b))
-  )
-  rc_colnames <- expand.grid(c("b_", "sd_"), par_names)
-  colnames(rc_tab) <- c(paste0(rc_colnames$Var1, rc_colnames$Var2))
-  row.names(rc_tab) <- var_names
-  print(rc_tab)
-  cat("\n")
-
-  cat("Sample Sizes:\n")
-  cat(sprintf("  %s: n = %d\n", x$info$grp_a, x$sample_sizes$n_a))
-  cat(sprintf("  %s: n = %d\n\n", x$info$grp_b, x$sample_sizes$n_b))
-
-  cat("Treatment Effect:\n")
-  cat(sprintf("  Delta mean: %s\n", paste(x$delta$mean_delta, collapse = ", ")))
-  cat(sprintf("  Delta SE:   %s\n", paste(x$delta$se_delta, collapse = ", ")))
-
-  if (x$info$rule == "Comp") {
-    cat(sprintf("  Weighted delta mean: %.3f\n", x$delta$w_delta))
+  if (x$info$rule == "Comp" && !is.null(x$delta$w_delta)) {
+    cat(sprintf("Posterior probability %s [%s, w = %s]: %.3f\n",
+                x$info$test_label, x$info$rule,
+                paste(round(x$info$w, digits), collapse = ", "),
+                x$delta$pop))
+  } else {
+    cat(sprintf("Posterior probability %s [%s rule]: %.3f\n",
+                x$info$test_label, x$info$rule, x$delta$pop))
   }
 
-  cat(sprintf("  Posterior probability: %.3f\n\n", x$delta$pop))
-
-  cat("Test Information:\n")
-  cat(sprintf(" Prior: normal distribution with :\n"))
-  cat(sprintf(" Mean: \n"))
-  df_b_mu0 <- setNames(as.data.frame(t(x$info$b_mu0)), var_names)
-  rownames(df_b_mu0) <- NULL
-  print(df_b_mu0)
-  cat("\n")
-
-  cat(sprintf(" Variance: \n"))
-  df_b_sigma0 <- setNames(as.data.frame(cbind(var_names, solve(x$info$b_sigma0))), c("",var_names))
-  rownames(df_b_sigma0) <- NULL
-  print(df_b_sigma0)
-  cat("\n")
-
-  cat(sprintf("  Decision rule: %s\n", x$info$rule))
-  if (x$info$rule == "Comp") {
-    cat(sprintf("  Weights: %s\n", paste(x$info$w, collapse = ", ")))
-  }
-  cat(sprintf("  Hypothesis: %s\n", x$info$test_label))
-  cat(sprintf("  Marginalization method: %s\n", x$info$marg_method))
-  cat(sprintf("  Reference group: %s\n", x$info$ref_grp))
-  cat(sprintf("  (Sub)population: [%s]\n\n",
+  cat(sprintf("Marginalization: %s over [%s]\n",
+              x$info$marg_method,
               paste(x$info$sub_pop, collapse = ", ")))
+
+  cat("\nUse summary() for regression coefficients, priors and MCMC diagnostics.\n\n")
 
   invisible(x)
 }

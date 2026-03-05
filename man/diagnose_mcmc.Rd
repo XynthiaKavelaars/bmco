@@ -4,15 +4,11 @@
 \alias{diagnose_mcmc}
 \title{Diagnose MCMC Chains}
 \usage{
-diagnose_mcmc(chains, plots = NULL, param_names = NULL)
+diagnose_mcmc(chains, param_names = NULL)
 }
 \arguments{
 \item{chains}{An mcmc.list object or a list of mcmc.list objects containing
 the MCMC chains to diagnose.}
-
-\item{plots}{Logical or character vector. If TRUE, produces all diagnostic plots.
-If character vector, can specify c("trace", "density", "autocorr") for specific
-plots. If FALSE or NULL, no plots are produced. Default is NULL.}
 
 \item{param_names}{Optional character vector of parameter names for plot labels.
 If NULL, uses column names from chains.}
@@ -23,16 +19,12 @@ A list with diagnostic information:
 \item{convergence}{Multivariate potential scale reduction factor (Gelman-Rubin statistic)}
 \item{n_eff}{Effective sample sizes for each parameter}
 \item{rhat}{Univariate potential scale reduction factors for each parameter}
-\item{chains}{The mcmc.list object (for plotting)}
+\item{summary}{Posterior summary of MCMC chains}
+
 }
 }
 \description{
 Perform diagnostic checks on MCMC chains including convergence assessment
 and optional trace plots.
 }
-\examples{
-\dontrun{
-# For a fitted model
-diagnostics <- diagnose_mcmc(model$chains, plots = TRUE)
-}
-}
+\keyword{internal}

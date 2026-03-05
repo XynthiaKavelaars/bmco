@@ -17,3 +17,4 @@ Invisibly returns the input object.
 \description{
 Print Method for mcmc_diagnostics Objects
 }
+\keyword{internal}

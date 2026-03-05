@@ -49,31 +49,52 @@ If NULL and rule = "Comp", equal weights are used. Default is NULL.}
 \item{return_samples}{Logical. Should posterior samples be returned? Default is FALSE.}
 }
 \value{
-A list of class "bmvb" containing:
+An object of class \code{bmvb}, a list containing:
 \describe{
-\item{estimates}{Posterior means and standard deviations for each group}
-\item{sample_sizes}{Sample sizes for each group}
-\item{delta}{Treatment effect estimates and posterior probability}
-\item{info}{Test specifications}
-\item{samples}{Posterior samples (if return_samples = TRUE)}
+\item{estimates}{A list with posterior means (\code{mean_a}, \code{mean_b})
+and standard deviations (\code{sd_a}, \code{sd_b}) of the category probabilities
+for both groups.}
+\item{sample_sizes}{A list with group sample sizes (\code{n_a}, \code{n_b}).}
+\item{delta}{A list with posterior mean differences (\code{mean_delta}),
+posterior standard errors (\code{se_delta}), posterior probability of the
+hypothesis (\code{pop}), and, if \code{rule = "Comp"}, the weighted
+difference (\code{w_delta}).}
+\item{info}{A list with test specifications, including the decision rule,
+test direction, group labels, and weights (if applicable).}
+\item{samples}{If \code{return_samples = TRUE}, a list containing posterior
+draws of \code{theta_a}, \code{theta_b}, and \code{delta}.}
 }
 }
 \description{
 Perform a Bayesian test for differences between two groups on multiple binary outcomes
-using a Multivariate Bernoulli distribution.
+using a Multivariate Bernoulli distribution, as described in \insertCite{Kavelaars2020;textual}{bmco}.
 }
 \examples{
-\dontrun{
+\donttest{
 # Example with simulated data
-result <- bmvb(
-  data = my_data,
-  grp = "treatment",
-  grp_a = "control",
-  grp_b = "experimental",
-  y_vars = c("outcome1", "outcome2"),
-  test = "right_sided",
-  rule = "All"
+# Generate data
+set.seed(123)
+data <- data.frame(
+treatment = rep(c("control", "drug"), each = 50),
+ outcome1 = rbinom(100, 1, 0.5),
+ outcome2 = rbinom(100, 1, 0.5)
 )
+
+# Analyze
+result <- bmvb(
+ data = data,
+ grp = "treatment",
+ grp_a = "control",
+ grp_b = "drug",
+ y_vars = c("outcome1", "outcome2"),
+ n_it = 10000
+)
+
 print(result)
+}
+}
+\references{
+{
+\insertRef{Kavelaars2020}{bmco}
 }
 }

@@ -1,4 +1,4 @@
-#### utils.R - Shared helper functions for bayesmulticat package ####
+#### utils.R - Shared helper functions for bmco package ####
 
 #' Compute Pairwise Correlation
 #'
@@ -681,11 +681,11 @@ check_input <- function(data, grp, grp_a, grp_b, y_vars, test, rule, w,
       }
 
       # Check x_def bounds
-      if (is.finite(x_def[1]) && x_def[1] < data_range[1]) {
+      if (is.finite(x_def[1]) && x_def[1] < data_range[1] && x_def[2] > data_range[1]) {
         warning("Lower bound of x_def (", x_def[1],
                 ") is below minimum observed value (", round(data_range[1], 2), ")")
       }
-      if (is.finite(x_def[2]) && x_def[2] > data_range[2]) {
+      if (is.finite(x_def[2]) && x_def[2] > data_range[2] && x_def[1] < data_range[2]) {
         warning("Upper bound of x_def (", x_def[2],
                 ") is above maximum observed value (", round(data_range[2], 2), ")")
       }

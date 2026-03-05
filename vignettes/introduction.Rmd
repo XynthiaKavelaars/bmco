@@ -1,19 +1,13 @@
 ---
 title: "Introduction to bmco"
 output: rmarkdown::html_vignette
-bibliography: bmco.bib
-nocite: '@*'
 vignette: >
   %\VignetteIndexEntry{Introduction to bmco}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-% Source - https://stackoverflow.com/a/61528568
-% Posted by J_F
-% Retrieved 2026-02-18, License - CC BY-SA 4.0
-
 ```{r, echo=FALSE}
-biblio <- RefManageR::ReadBib("bmco.bib", check = "error")
+biblio <- RefManageR::ReadBib("../inst/REFERENCES.bib", check = "error")
 ```
 
 ```{r, include = FALSE}
@@ -68,6 +62,8 @@ result <- bmvb(
 )
 
 print(result)
+summary(result)
+
 ```
 
 The posterior probability (`pop`) of this example tells us: **"What is the probability that the drug is better than placebo on BOTH outcomes?"**
@@ -118,6 +114,9 @@ result_bglm <- bglm(
   n_burn = 200,
   n_it = 500
 )
+
+print(result_bglm)
+summary(result_bglm) 
 ```
 
 For more details on statistical methodology or when using this function, please cite:
@@ -134,7 +133,8 @@ Also see the "Subgroup analysis" vignette for details.
 # Add cluster variable
 trial_data$hospital <- rep(1:10, each = 10)
 
-result_bglmm <- bglmm(
+result_bglmm <- suppressWarnings( # Warnings due to small number of iterations suppressed
+  bglmm(
   data = trial_data,
   grp = "treatment",
   grp_a = "placebo",
@@ -149,6 +149,10 @@ result_bglmm <- bglmm(
   n_it = 500,
   n_thin = 3
 )
+)
+
+print(result_bglmm)
+summary(result_bglmm)
 ```
 
 For more details on statistical methodology or when using this function, please cite:
@@ -419,7 +423,7 @@ cat("  P(drug better on BOTH):", result_bayes$delta$pop, "\n")
 
 Explore the other vignettes:
 
-- **Subgroup analysis**: Using `bglm()` to adjust for baseline variables
+- **Subgroup analysis**: Using `bglm()` to perform subgroup analysis
 - **Multilevel Models**: Using `bglmm()` for clustered data
 
 ## References

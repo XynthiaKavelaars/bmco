@@ -19,3 +19,11 @@ Invisibly returns the input object.
 \description{
 Print Method for bglm Objects
 }
+\examples{
+# Uses the pre-computed example object shipped with the package:
+print(bglm_fit)
+
+}
+\seealso{
+\code{\link{summary.bglm}}
+}

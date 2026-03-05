@@ -1,7 +1,6 @@
 ---
 title: "Subgroup Analysis with Multivariate Binary Outcomes"
 output: rmarkdown::html_vignette
-bibliography: bmco.bib
 vignette: >
   %\VignetteIndexEntry{Subgroup Analysis with Multivariate Binary Outcomes}
   %\VignetteEngine{knitr::rmarkdown}
@@ -18,7 +17,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, echo=FALSE}
-biblio <- RefManageR::ReadBib("bmco.bib", check = "error")
+biblio <- RefManageR::ReadBib("../inst/REFERENCES.bib", check = "error")
 ```
 
 ## Introduction
@@ -102,6 +101,7 @@ result_full_sample <- bglm(
 )
 
 print(result_full_sample)
+summary(result_full_sample)
 ```
 
 This gives an average effect across all ages in the sample.

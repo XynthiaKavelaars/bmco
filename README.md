@@ -48,3 +48,11 @@ print(result)
 ## Getting Help
 
 See `vignette("introduction")` for detailed examples.
+
+## Acknowledgements
+
+The statistical underpinnings of this package were developed with
+financial support of a NWO (Dutch Research Council) research talent
+grant (no. 406.18.505) and the theoretical insights of Maurits Kaptein
+(Eindhoven University of Technology, The Netherlands) and Joris Mulder
+(Tilburg University, The Netherlands).

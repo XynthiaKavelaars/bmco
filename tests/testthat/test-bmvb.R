@@ -444,7 +444,7 @@ test_that("print method works", {
 
   # Should not error
   expect_output(print(result), "Multivariate Bernoulli")
-  expect_output(print(result), "Group Estimates")
+  expect_output(print(result), "Group")
   expect_output(print(result), "Posterior probability")
 })
 

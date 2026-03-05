@@ -23,3 +23,12 @@ Invisibly returns NULL (plots are displayed).
 \description{
 Plot Method for bglmm Objects
 }
+\examples{
+# Uses the pre-computed example object shipped with the package.
+# Trace plots for the fixed-effect regression coefficients:
+plot(bglmm_fit, type = "trace", which = "fixed")
+
+# Trace plots for the random-effect variance components:
+plot(bglmm_fit, type = "trace", which = "variance")
+
+}
