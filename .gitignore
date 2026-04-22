@@ -22,5 +22,5 @@ README.Rmd
 .Ruserdata
 
 # Gegenereerde bestanden
-# docs/          # alleen als je pkgdown gebruikt en niet wil tracken
+# docs/          
 docs
