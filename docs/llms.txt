@@ -1,0 +1,117 @@
+# bmco
+
+Bayesian methods for comparing groups on multiple binary outcomes.
+
+## Installation
+
+``` r
+# From CRAN (when accepted)
+install.packages("bmco")
+
+# Development version
+# devtools::install_github("XynthiaKavelaars/bmco")
+```
+
+## Quick Example
+
+``` r
+library(bmco)
+
+# Generate data
+set.seed(123)
+data <- data.frame(
+  treatment = rep(c("control", "drug"), each = 50),
+  outcome1 = rbinom(100, 1, 0.5),
+  outcome2 = rbinom(100, 1, 0.5)
+)
+
+# Analyze
+result <- bmvb(
+  data = data,
+  grp = "treatment",
+  grp_a = "control",
+  grp_b = "drug",
+  y_vars = c("outcome1", "outcome2"),
+  n_it = 10000
+)
+
+print(result)
+```
+
+## Functions
+
+- [`bmvb()`](https://xynthiakavelaars.github.io/bmco/reference/bmvb.md):
+  Basic group comparison
+- [`bglm()`](https://xynthiakavelaars.github.io/bmco/reference/bglm.md):
+  Subgroup analysis  
+- [`bglmm()`](https://xynthiakavelaars.github.io/bmco/reference/bglmm.md):
+  Multilevel data
+
+## Getting Help
+
+See
+[`vignette("introduction")`](https://xynthiakavelaars.github.io/bmco/articles/introduction.md)
+for detailed examples.
+
+## Acknowledgements
+
+The statistical underpinnings of this package were developed with
+financial support of a NWO (Dutch Research Council) research talent
+grant (no. 406.18.505) and the theoretical insights of Maurits Kaptein
+(Eindhoven University of Technology, The Netherlands) and Joris Mulder
+(Tilburg University, The Netherlands).
+
+# Package index
+
+## All functions
+
+- [`bglm()`](https://xynthiakavelaars.github.io/bmco/reference/bglm.md)
+  : Bayesian Generalized Linear Model
+- [`bglmm()`](https://xynthiakavelaars.github.io/bmco/reference/bglmm.md)
+  : Bayesian Generalized Linear Mixed Model
+- [`bglmm_data`](https://xynthiakavelaars.github.io/bmco/reference/bglmm_data.md)
+  : Simulated Multilevel Clinical Trial Data
+- [`bglmm_fit`](https://xynthiakavelaars.github.io/bmco/reference/bglmm_fit.md)
+  : Pre-computed bglmm Example Fit
+- [`bglm_data`](https://xynthiakavelaars.github.io/bmco/reference/bglm_data.md)
+  : Simulated Single-Level Clinical Trial Data
+- [`bglm_fit`](https://xynthiakavelaars.github.io/bmco/reference/bglm_fit.md)
+  : Pre-computed bglm Example Fit
+- [`bmco`](https://xynthiakavelaars.github.io/bmco/reference/bmco-package.md)
+  [`bmco-package`](https://xynthiakavelaars.github.io/bmco/reference/bmco-package.md)
+  : bmco: Bayesian Analysis for Multivariate Categorical Outcomes
+- [`bmvb()`](https://xynthiakavelaars.github.io/bmco/reference/bmvb.md)
+  : Bayesian Multivariate Bernoulli Test
+- [`plot(`*`<bglm>`*`)`](https://xynthiakavelaars.github.io/bmco/reference/plot.bglm.md)
+  : Plot Method for bglm Objects
+- [`plot(`*`<bglmm>`*`)`](https://xynthiakavelaars.github.io/bmco/reference/plot.bglmm.md)
+  : Plot Method for bglmm Objects
+- [`print(`*`<bglm>`*`)`](https://xynthiakavelaars.github.io/bmco/reference/print.bglm.md)
+  : Print Method for bglm Objects
+- [`print(`*`<bglmm>`*`)`](https://xynthiakavelaars.github.io/bmco/reference/print.bglmm.md)
+  : Print Method for bglmm Objects
+- [`print(`*`<bmvb>`*`)`](https://xynthiakavelaars.github.io/bmco/reference/print.bmvb.md)
+  : Print Method for bmvb Objects
+- [`print(`*`<summary.bglm>`*`)`](https://xynthiakavelaars.github.io/bmco/reference/print.summary.bglm.md)
+  : Print Method for summary.bglm Objects
+- [`print(`*`<summary.bglmm>`*`)`](https://xynthiakavelaars.github.io/bmco/reference/print.summary.bglmm.md)
+  : Print Method for summary.bglmm Objects
+- [`print(`*`<summary.bmvb>`*`)`](https://xynthiakavelaars.github.io/bmco/reference/print.summary.bmvb.md)
+  : Print Method for summary.bmvb Objects
+- [`summary(`*`<bglm>`*`)`](https://xynthiakavelaars.github.io/bmco/reference/summary.bglm.md)
+  : Summary Method for bglm Objects
+- [`summary(`*`<bglmm>`*`)`](https://xynthiakavelaars.github.io/bmco/reference/summary.bglmm.md)
+  : Summary Method for bglmm Objects
+- [`summary(`*`<bmvb>`*`)`](https://xynthiakavelaars.github.io/bmco/reference/summary.bmvb.md)
+  : Summary Method for bmvb Objects
+
+# Articles
+
+### All vignettes
+
+- [Introduction to
+  bmco](https://xynthiakavelaars.github.io/bmco/articles/introduction.md):
+- [Subgroup Analysis with Multivariate Binary Outcomes in Multilevel
+  Data](https://xynthiakavelaars.github.io/bmco/articles/multilevel-models.md):
+- [Subgroup Analysis with Multivariate Binary
+  Outcomes](https://xynthiakavelaars.github.io/bmco/articles/subgroup-analysis.md):
